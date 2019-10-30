@@ -21,6 +21,16 @@ public class LiftTeleOp extends OpMode {
         grabberRotation = hardwareMap.servo.get ("grabberRotation");
         grabberExtender = hardwareMap.servo.get ("grabberExtender");
 
+        rightLift.setDirection(DcMotor.Direction.FORWARD);
+        leftLift.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+
+
+
 
     }
 
