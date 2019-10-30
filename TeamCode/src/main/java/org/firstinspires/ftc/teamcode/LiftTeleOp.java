@@ -20,7 +20,7 @@ public class LiftTeleOp extends OpMode {
         grabberServo = hardwareMap.servo.get ("grabberServo");
         grabberRotation = hardwareMap.servo.get ("grabberRotation");
         grabberExtender = hardwareMap.servo.get ("grabberExtender");
-        
+
 
     }
 
