@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class CollectorTeleOp extends OpMode {
     DcMotor rollerRight, rollerLeft;
-    Servo hookRightX, hookRightY, hookLeftX, hookLeftY;
+    Servo hookX, hookY;
 
     final double rollerPower = 0.7;
 
@@ -18,17 +18,15 @@ public class CollectorTeleOp extends OpMode {
     final double hookXready = 0.5;
     final double hookYready = 0.9;
 
-    final double hookXrun = 0.7;
-    final double hookYrun = 1;
+    double hookXrun = 0;
+    double hookYrun = 0;
 
     public void init() {
         rollerRight = hardwareMap.dcMotor.get("rollerRight");
         rollerLeft = hardwareMap.dcMotor.get("rollerLeft");
 
-        hookRightX = hardwareMap.servo.get("hookRightX");
-        hookRightY = hardwareMap.servo.get("hookRightY");
-        hookLeftX = hardwareMap.servo.get("hookLeftX");
-        hookLeftY = hardwareMap.servo.get("hookLeftY");
+        hookX = hardwareMap.servo.get("hookRightX");
+        hookY = hardwareMap.servo.get("hookRightY");
 
         rollerRight.setDirection(DcMotor.Direction.FORWARD);
         rollerLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -36,8 +34,8 @@ public class CollectorTeleOp extends OpMode {
         rollerRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rollerLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        hookLeftX.setPosition(hookXinit);
-        hookLeftY.setPosition(hookYinit);
+        hookX.setPosition(hookXinit);
+        hookY.setPosition(hookYinit);
     }
 
     public void loop() {
@@ -59,18 +57,11 @@ public class CollectorTeleOp extends OpMode {
     }
     private void setHookMotors(){
         if(gamepad2.x == true){
-            hookLeftX.setPosition(hookXready);
-            hookLeftY.setPosition(hookYready);
+            hookX.setPosition(hookXready);
+            hookY.setPosition(hookYready);
         } else if(gamepad2.y == true){
-            hookLeftX.setPosition(hookXinit);
-            hookLeftY.setPosition(hookYinit);
-        }
-        if(gamepad2.a == true){
-            hookLeftX.setPosition(hookXrun);
-            hookLeftY.setPosition(hookYrun);
-        } else if(gamepad2.b == true){
-            hookLeftX.setPosition(hookXready);
-            hookLeftY.setPosition(hookYready);
+            hookX.setPosition(hookXinit);
+            hookY.setPosition(hookYinit);
         }
     }
 }
