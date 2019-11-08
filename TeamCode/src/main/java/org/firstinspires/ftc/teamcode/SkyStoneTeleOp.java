@@ -55,7 +55,7 @@ public class SkyStoneTeleOp extends OpMode {
         setRollerMotors();
         setHookMotors();
         setLiftMotors();
-        setGrabberMoters();
+        setGrabberMotors();
     }
 
     private void setDriveMotors() {
@@ -89,15 +89,15 @@ public class SkyStoneTeleOp extends OpMode {
     }
 
     private void setLiftMotors()  {
-        //mechanical limit also needed
-        if(minLift <= leftLift.getCurrentPosition() &&leftLift.getCurrentPosition() <= maxLift) {
-            rightLift.setPower(gamepad2.left_stick_y);
-            leftLift.setPower(gamepad2.left_stick_y);
-        }
+        // TODO consider carefully what actions could harm the lift and how to avoid doing those things
+        //if(minLift <= leftLift.getCurrentPosition() &&leftLift.getCurrentPosition() <= maxLift) {
+        rightLift.setPower(gamepad2.left_stick_y / 4);
+        leftLift.setPower(gamepad2.left_stick_y / 4);
+        // }
 
     }
 
-    private void setGrabberMoters() {
+    private void setGrabberMotors() {
         boolean ifUnpressedRT = true;
         boolean ifUnpressedLT = true;
 
