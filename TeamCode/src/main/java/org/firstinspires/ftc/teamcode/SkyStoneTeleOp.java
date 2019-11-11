@@ -3,12 +3,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name="SkyStoneTeleOp", group="TeamCode")
 
 public class SkyStoneTeleOp extends OpMode {
-    DcMotor frontRight, frontLeft, backRight, backLeft, rollerRight, rollerLeft, rightLift, leftLift;
+    DcMotor frontRight, frontLeft, backRight, backLeft, rightRoller, leftRoller, rightLift, leftLift;
     Servo hookHrz, hookVrt, deliveryGrabber, deliveryRotation;
     CRServo deliveryExtender;
 
@@ -27,27 +28,54 @@ public class SkyStoneTeleOp extends OpMode {
     double hookHrzRun = 0;
     double hookVrtRun = 0;
 
+    double grabberVal = 0;
+
+    boolean ifUnpressedRT = true;
+    boolean ifUnpressedLT = true;
+
     public void init() {
         frontRight = hardwareMap.dcMotor.get("frontRight");
         frontLeft = hardwareMap.dcMotor.get("frontLeft");
         backRight = hardwareMap.dcMotor.get("backRight");
         backLeft = hardwareMap.dcMotor.get("backLeft");
 
-        rollerRight = hardwareMap.dcMotor.get("rollerRight");
-        rollerLeft = hardwareMap.dcMotor.get("rollerLeft");
+        rightRoller = hardwareMap.dcMotor.get("rightRoller");
+        leftRoller = hardwareMap.dcMotor.get("leftRoller");
+        
+        rightLift = hardwareMap.dcMotor.get("rightLift");
+        leftLift = hardwareMap.dcMotor.get("leftLift");
 
-        hookHrz = hardwareMap.servo.get("hookRightX");
-        hookVrt = hardwareMap.servo.get("hookRightY");
+        hookHrz = hardwareMap.servo.get("hookHrz");
+        hookVrt = hardwareMap.servo.get("hookVrt");
 
+        deliveryGrabber = hardwareMap.servo.get("deliveryGrabber");
+        deliveryRotation = hardwareMap.servo.get("deliveryRotation");
+
+        deliveryExtender = hardwareMap.crservo.get("deliveryExtender");
+
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
-        backLeft.setDirection(DcMotor.Direction.FORWARD);
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
+
+        rightRoller.setDirection(DcMotor.Direction.REVERSE);
+        leftRoller.setDirection(DcMotor.Direction.FORWARD);
+
+        rightLift.setDirection(DcMotor.Direction.REVERSE);
+        leftLift.setDirection(DcMotor.Direction.REVERSE);
+
+        deliveryExtender.setDirection(CRServo.Direction.FORWARD);
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        rightRoller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftRoller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void loop() {
@@ -66,15 +94,15 @@ public class SkyStoneTeleOp extends OpMode {
     }
     
     private void setRollerMotors(){
-        if(gamepad2.right_bumper == true){
-            rollerRight.setPower(rollerPower);
-            rollerLeft.setPower(-rollerPower);
-        } else if(gamepad2.left_bumper == true){
-            rollerRight.setPower(-rollerPower);
-            rollerLeft.setPower(rollerPower);
+        if(gamepad1.right_bumper == true){
+            rightRoller.setPower(rollerPower);
+            leftRoller.setPower(rollerPower);
+        } else if(gamepad1.left_bumper == true){
+            rightRoller.setPower(-rollerPower);
+            leftRoller.setPower(-rollerPower);
         } else{
-            rollerRight.setPower(0);
-            rollerLeft.setPower(0);
+            rightRoller.setPower(0);
+            leftRoller.setPower(0);
         }
     }
     
@@ -91,27 +119,32 @@ public class SkyStoneTeleOp extends OpMode {
     private void setLiftMotors()  {
         // TODO consider carefully what actions could harm the lift and how to avoid doing those things
         //if(minLift <= leftLift.getCurrentPosition() &&leftLift.getCurrentPosition() <= maxLift) {
-        rightLift.setPower(gamepad2.left_stick_y / 4);
-        leftLift.setPower(gamepad2.left_stick_y / 4);
+        if(gamepad2.left_stick_y > 0.3) {
+            rightLift.setPower(gamepad2.left_stick_y * 2 / 5);
+            leftLift.setPower(gamepad2.left_stick_y * 2 / 5);
+        }
+        else if(gamepad2.left_stick_y < -0.3) {
+            rightLift.setPower(gamepad2.left_stick_y / 4);
+            leftLift.setPower(gamepad2.left_stick_y / 4);
+        }
         // }
 
     }
 
     private void setGrabberMotors() {
-        boolean ifUnpressedRT = true;
-        boolean ifUnpressedLT = true;
-
         deliveryExtender.setPower(gamepad2.right_stick_y);
 
+        grabberVal = deliveryGrabber.getPosition();
+
         if (gamepad2.right_bumper == true) {
-            deliveryGrabber.setPosition(0);
+            deliveryGrabber.setPosition(grabberVal + 0.1);
         }
 
         if (gamepad2.left_bumper == true) {
-            deliveryGrabber.setPosition(0.5);
+            deliveryGrabber.setPosition(grabberVal - 0.1);
         }
 
-        if  (gamepad2.right_trigger >= 0.5 && ifUnpressedRT == true) {
+        if  (gamepad2.right_trigger >= 0.5 && ifUnpressedRT) {
             if(deliveryRotation.getPosition() < 0.1) {
                 deliveryRotation.setPosition(0.5);
                 ifUnpressedRT = false;
@@ -124,7 +157,7 @@ public class SkyStoneTeleOp extends OpMode {
         else
             ifUnpressedRT = true;
 
-        if (gamepad2.left_trigger >= 0.5 && ifUnpressedLT == true) {
+        if (gamepad2.left_trigger >= 0.5 && ifUnpressedLT) {
             if(0.9 < deliveryRotation.getPosition()) {
                 deliveryRotation.setPosition(0.5);
                 ifUnpressedLT = false;
