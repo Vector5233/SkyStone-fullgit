@@ -76,6 +76,8 @@ public class SkyStoneTeleOp extends OpMode {
 
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        deliveryRotation.setPosition(0.5);
     }
 
     public void loop() {
@@ -120,12 +122,16 @@ public class SkyStoneTeleOp extends OpMode {
         // TODO consider carefully what actions could harm the lift and how to avoid doing those things
         //if(minLift <= leftLift.getCurrentPosition() &&leftLift.getCurrentPosition() <= maxLift) {
         if(gamepad2.left_stick_y > 0.3) {
+            rightLift.setPower(gamepad2.left_stick_y / 4);
+            leftLift.setPower(gamepad2.left_stick_y / 4);
+        }
+        else if(gamepad2.left_stick_y < -0.3) {
             rightLift.setPower(gamepad2.left_stick_y * 2 / 5);
             leftLift.setPower(gamepad2.left_stick_y * 2 / 5);
         }
-        else if(gamepad2.left_stick_y < -0.3) {
-            rightLift.setPower(gamepad2.left_stick_y / 4);
-            leftLift.setPower(gamepad2.left_stick_y / 4);
+        else{
+            rightLift.setPower(0);
+            leftLift.setPower(0);
         }
         // }
 
@@ -134,23 +140,23 @@ public class SkyStoneTeleOp extends OpMode {
     private void setGrabberMotors() {
         deliveryExtender.setPower(gamepad2.right_stick_y);
 
-        grabberVal = deliveryGrabber.getPosition();
-
         if (gamepad2.right_bumper == true) {
-            deliveryGrabber.setPosition(grabberVal + 0.1);
+            deliveryGrabber.setPosition(0.3);
         }
 
         if (gamepad2.left_bumper == true) {
-            deliveryGrabber.setPosition(grabberVal - 0.1);
+            deliveryGrabber.setPosition(0.6);
         }
 
         if  (gamepad2.right_trigger >= 0.5 && ifUnpressedRT) {
             if(deliveryRotation.getPosition() < 0.1) {
                 deliveryRotation.setPosition(0.5);
+                telemetry.addData("Grabber", deliveryRotation.getPosition());
                 ifUnpressedRT = false;
             }
             else if(0.4 < deliveryRotation.getPosition() && deliveryRotation.getPosition() < 0.6) {
                 deliveryRotation.setPosition(1);
+                telemetry.addData("Grabber", deliveryRotation.getPosition());
                 ifUnpressedRT = false;
             }
         }
