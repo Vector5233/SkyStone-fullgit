@@ -32,7 +32,7 @@ public class SkyStoneTeleOp extends OpMode {
 
     boolean ifUnpressedRT = true;
     boolean ifUnpressedLT = true;
- 
+
     public void init() {
         frontRight = hardwareMap.dcMotor.get("frontRight");
         frontLeft = hardwareMap.dcMotor.get("frontLeft");
