@@ -29,10 +29,10 @@ public class ServoTestTeleOp extends OpMode {
         final int maxLift = 700;
         final int minLift = 0;
 
-        double hookHrzRun = 0;
-        double hookVrtRun = 0;
+        double hookHrzPos = 0;
+        double hookVrtPos = 0;
 
-        boolean ifUnpressedLT = true;
+        boolean if_pressedLT = false;
 
         public void init() {
             frontRight = hardwareMap.dcMotor.get("frontRight");
@@ -75,24 +75,62 @@ public class ServoTestTeleOp extends OpMode {
 
             rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            hookHrz.setPosition(0.5);
+            hookVrt.setPosition(0.5);
         }
 
         public void loop () {
-            moveCollectorServo();
+            movehookHrz();
+            movehookVrt();
+            telemetry.addData("hookHrz", hookHrz.getPosition());
+            telemetry.addData("hookVrt", hookVrt.getPosition());
         }
 
-        public void moveCollectorServo () {
-            if(ifUnpressedLT) {
+
+        public void movehookHrz () {
+            if(!if_pressedLT) {
                 if (gamepad1.a && hookHrz.getPosition() <= 1) {
-
-                    ifUnpressedLT = true;
+                    hookHrzPos += 0.02;
+                    if_pressedLT = true;
+                } else if (gamepad1.b && hookHrz.getPosition() >= -1) {
+                    hookHrzPos -= 0.02;
+                    if_pressedLT = true;
                 }
-                else if (gamepad1.b ){
 
+                hookHrz.setPosition(hookHrzPos);
+            }
+
+            else {
+                if(!gamepad1.a && !gamepad1.b) {
+                    if_pressedLT = false;
                 }
+            }
 
+
+        }
+
+    public void movehookVrt () {
+        if(!if_pressedLT) {
+            if (gamepad1.x && hookHrz.getPosition() <= 1) {
+                hookVrtPos += 0.02;
+                if_pressedLT = true;
+            } else if (gamepad1.y && hookHrz.getPosition() >= -1) {
+                hookVrtPos -= 0.02;
+                if_pressedLT = true;
+            }
+
+            hookHrz.setPosition(hookVrtPos);
+        }
+
+        else {
+            if(!gamepad1.x && !gamepad1.y) {
+                if_pressedLT = false;
             }
         }
+
+
+    }
 
 
 
