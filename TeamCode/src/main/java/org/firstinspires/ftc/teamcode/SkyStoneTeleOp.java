@@ -13,7 +13,7 @@ public class SkyStoneTeleOp extends OpMode {
     Servo hookHrz, hookVrt, deliveryGrabber, deliveryRotation;
     CRServo deliveryExtender;
 
-    final double rollerPower = 0.7;
+    final double rollerPower = 1.0;
 
     final double hookHrzInit = 0;
     final double hookVrtInit = 0.3;
@@ -32,7 +32,7 @@ public class SkyStoneTeleOp extends OpMode {
 
     boolean ifUnpressedRT = true;
     boolean ifUnpressedLT = true;
-
+ 
     public void init() {
         frontRight = hardwareMap.dcMotor.get("frontRight");
         frontLeft = hardwareMap.dcMotor.get("frontLeft");
