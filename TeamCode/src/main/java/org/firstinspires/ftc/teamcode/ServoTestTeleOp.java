@@ -80,11 +80,6 @@ public class ServoTestTeleOp extends OpMode {
                 if_pressedLT = false;
             }
         }
-
-
     }
-
-
-
 }
 
