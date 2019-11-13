@@ -22,13 +22,16 @@ public class ServoTestTeleOp extends OpMode {
         double hookHrzPos = 0;
         double hookVrtPos = 0;
 
-        boolean if_pressedLT = false;
+        boolean if_pressedGp1A = false;
+        boolean if_pressedGp1X = false;
+        
+        double hooHrzVal = 0;
 
         public void init() {
             hookHrz = hardwareMap.servo.get("hookHrz");
             hookVrt = hardwareMap.servo.get("hookVrt");
-            hookHrz.setPosition(0.5);
-            hookVrt.setPosition(0.5);
+            hookHrz.setPosition(0);
+            hookVrt.setPosition(1.0);
             // initialize for the servo test
         }
 
@@ -41,21 +44,20 @@ public class ServoTestTeleOp extends OpMode {
 
 
         public void moveHookHrz () {
-            if(!if_pressedLT) {
-                if (gamepad1.a && hookHrz.getPosition() <= 1) {
-                    hookHrzPos += 0.02;
-                    if_pressedLT = true;
-                } else if (gamepad1.b && hookHrz.getPosition() >= -1) {
-                    hookHrzPos -= 0.02;
-                    if_pressedLT = true;
+            if(!if_pressedGp1A) {
+                if (gamepad1.a && (hookHrz.getPosition() >= 0.7 && hookHrz.getPosition() <= 1)) {
+                    hookHrzPos += 0.09;
+                    if_pressedGp1A = true;
+                } else if (gamepad1.b && (hookHrz.getPosition() >= 0 && hookHrz.getPosition() <= 0.2)) {
+                    hookHrzPos -= 0.09;
+                    if_pressedGp1A = true;
                 }
-
                 hookHrz.setPosition(hookHrzPos);
             }
 
             else {
                 if(!gamepad1.a && !gamepad1.b) {
-                    if_pressedLT = false;
+                    if_pressedGp1A = false;
                 }
             }
 
@@ -63,13 +65,13 @@ public class ServoTestTeleOp extends OpMode {
         }
 
     public void moveHookVrt () {
-        if(!if_pressedLT) {
-            if (gamepad1.x && hookHrz.getPosition() <= 1) {
+        if(!if_pressedGp1X) {
+            if (gamepad1.x && (hookVrt.getPosition() >= 0.7 && hookVrt.getPosition() <= 1)) {
                 hookVrtPos += 0.02;
-                if_pressedLT = true;
-            } else if (gamepad1.y && hookHrz.getPosition() >= -1) {
+                if_pressedGp1X = true;
+            } else if (gamepad1.y && (hookVrt.getPosition() >= 0 && hookVrt.getPosition() <= 0.3)) {
                 hookVrtPos -= 0.02;
-                if_pressedLT = true;
+                if_pressedGp1X = true;
             }
 
             hookHrz.setPosition(hookVrtPos);
@@ -77,7 +79,7 @@ public class ServoTestTeleOp extends OpMode {
 
         else {
             if(!gamepad1.x && !gamepad1.y) {
-                if_pressedLT = false;
+                if_pressedGp1X = false;
             }
         }
 
