@@ -121,13 +121,13 @@ public class SkyStoneTeleOp extends OpMode {
     private void setLiftMotors()  {
         // TODO consider carefully what actions could harm the lift and how to avoid doing those things
         //if(minLift <= leftLift.getCurrentPosition() &&leftLift.getCurrentPosition() <= maxLift) {
-        if(gamepad2.left_stick_y > 0.3) {
-            rightLift.setPower(gamepad2.left_stick_y / 4);
-            leftLift.setPower(gamepad2.left_stick_y / 4);
+        if(gamepad2.left_stick_y > 0.5) {
+            rightLift.setPower(gamepad2.left_stick_y * 0.1);
+            leftLift.setPower(gamepad2.left_stick_y * 0.1);
         }
-        else if(gamepad2.left_stick_y < -0.3) {
-            rightLift.setPower(gamepad2.left_stick_y * 2 / 5);
-            leftLift.setPower(gamepad2.left_stick_y * 2 / 5);
+        else if(gamepad2.left_stick_y < -0.5    ) {
+            rightLift.setPower(gamepad2.left_stick_y * 0.8);
+            leftLift.setPower(gamepad2.left_stick_y * 0.8);
         }
         else{
             rightLift.setPower(0);
