@@ -82,11 +82,6 @@ public class ServoTestTeleOp extends OpMode {
                 if_pressedGp1X = false;
             }
         }
-
-
     }
-
-
-
 }
 
