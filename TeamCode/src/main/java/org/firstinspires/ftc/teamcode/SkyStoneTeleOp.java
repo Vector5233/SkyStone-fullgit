@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class SkyStoneTeleOp extends OpMode {
     DcMotor frontRight, frontLeft, backRight, backLeft, rightRoller, leftRoller, rightLift, leftLift;
-    Servo hookHrz, hookVrt, deliveryGrabber , deliveryRotation,leftFoundation; //, rightFoundation;
+    Servo hookHrz, hookVrt, deliveryGrabber , deliveryRotation,leftFoundation, blockSweeper; //, rightFoundation;
     CRServo deliveryExtender;
 
     final double rollerPower = 1.0;
@@ -35,6 +35,7 @@ public class SkyStoneTeleOp extends OpMode {
 
     boolean if_pressedGp1A = false;
     boolean if_pressedGp1X = false;
+    boolean if_pressedGp1Y = false;
 
     public void init() {
         frontRight = hardwareMap.dcMotor.get("frontRight");
@@ -229,11 +230,29 @@ public class SkyStoneTeleOp extends OpMode {
     }
 
     public void setFoundationGrabber() {
-        if (gamepad1.b && leftFoundation.getPosition() >= 0.4) {
-            leftFoundation.setPosition(0);
+        if (gamepad1.b && leftFoundation.getPosition() >= 0.17) {
+            leftFoundation.setPosition(0.05);
+            //rightFoundation.setPosition(0.05);
         }
-        else if (gamepad1.b && leftFoundation.getPosition() <= 0.25) {
-            leftFoundation.setPosition(0.5);
+        else if (gamepad1.b && leftFoundation.getPosition() <= 0.1) {
+            leftFoundation.setPosition(0.2);
+            //rightFoundation.setPosition(0.2);
+
+        }
+    }
+    public void setBlockSweeper () {
+        if (gamepad1.y && !if_pressedGp1Y){
+            if (blockSweeper.getPosition() >= 0.8 && blockSweeper.getPosition() <= 0.1) {
+                blockSweeper.setPosition(0.95);
+            }
+            else if (blockSweeper.getPosition() >= 0 && blockSweeper.getPosition() <= 0.35) {
+                blockSweeper.setPosition(0.25);
+            }
+        }
+        else {
+            if(!gamepad1.x) {
+                if_pressedGp1Y = false;
+            }
         }
     }
 }
