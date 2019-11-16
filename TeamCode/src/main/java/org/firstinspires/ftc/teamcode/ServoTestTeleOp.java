@@ -39,7 +39,7 @@ public class ServoTestTeleOp extends OpMode {
     public void loop() {
         operateHookHrz();
         operateHookVrt();
-        moveFoundationGrabber();
+        moveFoundationGrabberPrac();
         telemetry.addData("foundationLGrabber", foundationLGrabber.getPosition());
         telemetry.addData("foundationRGrabber", foundationRGrabber.getPosition());
         telemetry.addData("hookHrz", hookHrz.getPosition());
@@ -105,6 +105,17 @@ public class ServoTestTeleOp extends OpMode {
         }
 
 
+    }
+
+    public void moveFoundationGrabberPrac() {
+        if (gamepad1.b && foundationLGrabber.getPosition() <= 0.55) {
+            foundationLGrabber.setPosition(0);
+            foundationRGrabber.setPosition(0);
+        }
+        else if (gamepad1.b && foundationLGrabber.getPosition() <= 0.25) {
+            foundationLGrabber.setPosition(0.5);
+            foundationRGrabber.setPosition(0.5);
+        }
     }
 }
 
