@@ -113,8 +113,8 @@ public class ServoTestTeleOp extends OpMode {
             foundationRGrabber.setPosition(0);
         }
         else if (gamepad1.b && foundationLGrabber.getPosition() <= 0.25) {
-            foundationLGrabber.setPosition(0.5);
-            foundationRGrabber.setPosition(0.5);
+            foundationLGrabber.setPosition(0.7);
+            foundationRGrabber.setPosition(0.7);
         }
     }
 }
