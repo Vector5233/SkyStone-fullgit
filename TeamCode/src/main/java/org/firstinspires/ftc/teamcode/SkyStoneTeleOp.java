@@ -197,7 +197,7 @@ public class SkyStoneTeleOp extends OpMode {
                 if_pressedGp1A = true;
             } else if (hookHrz.getPosition() >= 0 && hookHrz.getPosition() < 0.3) {
                 //hookHrzPos += 0.09;
-                hookHrz.setPosition(0.85);
+                hookHrz.setPosition(0.8);
                 if_pressedGp1A = true;
             }
             //hookHrz.setPosition(hookHrzPos);

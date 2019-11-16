@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -27,6 +28,7 @@ public class SSDriveObject extends Object{
     private ElapsedTime strafeTimeout;
     private ElapsedTime driveTimeout;
     private ElapsedTime turnTimeout;
+    private ElapsedTime rollerTimeout;
 
     //final double TICKS_PER_INCH = 1120.0 / (4 * 3.14159265358979323846264);
     //final double ROBOT_RADIUS = 9.87;
@@ -72,6 +74,13 @@ public class SSDriveObject extends Object{
         backRight.setPower(0.0);
     }
 
+    public void telemetryDcMotor(){
+        opmode.telemetry.addData("FR", frontRight.getPower());
+        opmode.telemetry.addData("FB", frontLeft.getPower());
+        opmode.telemetry.addData("BR", backRight.getPower());
+        opmode.telemetry.addData("BL", backLeft.getPower());
+        opmode.telemetry.update();
+    }
 
     public void driveDistance(double power, double distance) {
         int ticks = (int) (distance * TICKS_PER_INCH);
@@ -81,7 +90,6 @@ public class SSDriveObject extends Object{
         }*/
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeft.setTargetPosition(ticks);
@@ -96,14 +104,11 @@ public class SSDriveObject extends Object{
 
         while ((frontRight.isBusy() || frontLeft.isBusy()) && opmode.opModeIsActive()) ;
 
-        //opmode.telemetry.addData();
-
         stopDriving();
     }
+
     public void driveDistance(double power, double distance, int time) {
-
         int DRIVE_TIMEOUT = time;
-
         int ticks = (int) (distance * TICKS_PER_INCH);
 
         /*if (power > MAXSPEED) {
@@ -111,7 +116,6 @@ public class SSDriveObject extends Object{
         }*/
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeft.setTargetPosition(ticks);
@@ -129,13 +133,12 @@ public class SSDriveObject extends Object{
             if (driveTimeout.milliseconds() > DRIVE_TIMEOUT)
                 break;
         }
+
         telemetryDcMotor();
+
         stopDriving();
-
-
-
-
     }
+
     public void strafeDistance(double power, double distance) {
         int ticks = (int) (distance * TICKS_PER_INCH);
 
@@ -144,16 +147,6 @@ public class SSDriveObject extends Object{
         }*/
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
-        opmode.telemetry.addData("BL initial", backLeft.getCurrentPosition());
-        opmode.telemetry.addData("BR initial", backRight.getCurrentPosition());
-        opmode.telemetry.addData("FL initial", frontLeft.getCurrentPosition());
-        opmode.telemetry.addData("FR initial", frontRight.getCurrentPosition());
-        opmode.telemetry.addData("tick:", ticks);
-        opmode.telemetry.update();
-
-
         setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeft.setTargetPosition(ticks);
@@ -167,22 +160,14 @@ public class SSDriveObject extends Object{
         backRight.setPower(power);
 
         while ((frontRight.isBusy() || frontLeft.isBusy()) && opmode.opModeIsActive()) {
-
         }
 
         stopDriving();
     }
 
-
-
-
-
-
-
     public void strafeDistance (double power, double distance, int time) {
         strafeTimeout = new ElapsedTime();
         int STRAFE_TIMEOUT = time;
-
 
         int ticks = (int) (distance * TICKS_PER_INCH);
 
@@ -191,6 +176,7 @@ public class SSDriveObject extends Object{
         }*/
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeft.setTargetPosition(ticks);
         frontRight.setTargetPosition(-ticks);
@@ -206,8 +192,8 @@ public class SSDriveObject extends Object{
             if (strafeTimeout.milliseconds() > STRAFE_TIMEOUT)
                 break;
         }
-        stopDriving();
 
+        stopDriving();
     }
 
     public void turnDegree(double power, double degrees) {
@@ -220,6 +206,7 @@ public class SSDriveObject extends Object{
         }*/
 
         double target;
+
         opmode.telemetry.addData("Gyro", gyro.getIntegratedZValue());
         opmode.telemetry.update();
         target = gyro.getIntegratedZValue() + degrees;
@@ -243,6 +230,7 @@ public class SSDriveObject extends Object{
         telemetryDcMotor();
 
         stopDriving();
+
         opmode.telemetry.addData("Gyro end of turn", gyro.getIntegratedZValue());
         opmode.telemetry.update();
     }
@@ -293,9 +281,11 @@ public class SSDriveObject extends Object{
          * Caller must know what final heading should be!
          */
         double g;
+
         g = gyro.getIntegratedZValue();
         opmode.telemetry.addData("Gyro start correct", g);
         opmode.telemetry.update();
+
         if (g > target + TOLERANCE){
             turnDegree(0.7, g - target);
         } else if (g < target - TOLERANCE){
@@ -308,45 +298,26 @@ public class SSDriveObject extends Object{
         opmode.telemetry.update();
     }
 
-    public void telemetryDcMotor(){
-        opmode.telemetry.addData("FR", frontRight.getPower());
-        opmode.telemetry.addData("FB", frontLeft.getPower());
-        opmode.telemetry.addData("BR", backRight.getPower());
-        opmode.telemetry.addData("BL", backLeft.getPower());
-        opmode.telemetry.update();
-    }
-
-
-    public void setRollerMoters (double power) {
+    public void setRollerMoters (boolean direction, double power, int time) {
+        //direction true = forward
+        //direction false = backward
+        rollerTimeout = new ElapsedTime();
+        final int ROLLER_TIMEOUT = time;
 
         rollerLeft.setPower(power);
         rollerRight.setPower(power);
 
+        if(direction){
+            rollerLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+            rollerRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        } else if(!direction){
+            rollerLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+            rollerRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        }
+
+        while ((rollerRight.isBusy() || rollerLeft.isBusy()) && opmode.opModeIsActive()){
+            if (turnTimeout.milliseconds() > ROLLER_TIMEOUT)
+                break;
+        }
     }
-
-    public void runRollerMotors (double power){
-
-
-        /*
-        while(rollerRight.isBusy() && opmode.opModeIsActive()) {
-            if () {
-
-            }
-        }*/
-           //if "color sensor" > 0.1 then break.
-
-
-
-
-
-    }
-
-
-
-
-
-
-
-
-
 }
