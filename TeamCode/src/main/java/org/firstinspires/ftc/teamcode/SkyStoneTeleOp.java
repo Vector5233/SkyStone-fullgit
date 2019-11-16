@@ -153,11 +153,11 @@ public class SkyStoneTeleOp extends OpMode {
         deliveryExtender.setPower(gamepad2.right_stick_y);
 
         if (gamepad2.right_bumper == true) {
-            deliveryGrabber.setPosition(0.3);
+            deliveryGrabber.setPosition(0);
         }
 
         if (gamepad2.left_bumper == true) {
-            deliveryGrabber.setPosition(0.6);
+            deliveryGrabber.setPosition(0.2);
         }
 
         if  (gamepad2.right_trigger >= 0.5 && ifUnpressedRT) {
