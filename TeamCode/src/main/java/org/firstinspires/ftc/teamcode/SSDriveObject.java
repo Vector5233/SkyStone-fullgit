@@ -9,9 +9,8 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /* TODO
-    * strafeDistance(power, distance, time);
-    * strafeDistance(power, distance);
-    * turnDegree (power, degrees, time);
+   *setRollerMoter power
+
  */
 
 public class SSDriveObject extends Object{
@@ -77,8 +76,8 @@ public class SSDriveObject extends Object{
     public void driveDistance(double power, double distance) {
         int ticks = (int) (distance * TICKS_PER_INCH);
 
-        /*if (power > 0.65) {
-            power = 0.65;
+        /*if (power > MAXSPEED) {
+            power = MAXSPEED;
         }*/
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -107,8 +106,8 @@ public class SSDriveObject extends Object{
 
         int ticks = (int) (distance * TICKS_PER_INCH);
 
-        /*if (power > 0.65) {
-            power = 0.65;
+        /*if (power > MAXSPEED) {
+            power = MAXSPEED;
         }*/
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -253,11 +252,10 @@ public class SSDriveObject extends Object{
         final int TURN_TIMEOUT = time;
 
         // distance in inches
-        //conjecture instead of moving 12", wheels will go 12"*cos(45)= 8.5"
         int ticks = (int) ((2 * 3.14159 / 360) * degrees * ROBOT_RADIUS * TICKS_PER_INCH);
 
-        /*if (power > 0.65) {
-            power = 0.65;
+        /*if (power > MAXSPEED) {
+            power = MAXSPEED;
         }*/
 
         double target;
@@ -318,6 +316,30 @@ public class SSDriveObject extends Object{
         opmode.telemetry.update();
     }
 
+
+    public void setRollerMoters (double power) {
+
+        rollerLeft.setPower(power);
+        rollerRight.setPower(power);
+
+    }
+
+    public void runRollerMotors (double power){
+
+
+        /*
+        while(rollerRight.isBusy() && opmode.opModeIsActive()) {
+            if () {
+
+            }
+        }*/
+           //if "color sensor" > 0.1 then break.
+
+
+
+
+
+    }
 
 
 
