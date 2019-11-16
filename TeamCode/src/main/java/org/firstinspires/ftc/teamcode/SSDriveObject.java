@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 public class SSDriveObject extends Object{
-    Servo hookHrz, hookVrt, deliveryGrabber, deliveryRotation ;
+    Servo hookHrz, hookVrt, deliveryGrabber, deliveryRotation, camera, leftFoundation, rightFoundation, blockSweeper ;
     CRServo deliveryExtender;
     DcMotor frontRight, frontLeft, backRight, backLeft, rollerRight, rollerLeft;
     LinearOpMode opmode;
@@ -29,7 +29,10 @@ public class SSDriveObject extends Object{
     private ElapsedTime driveTimeout;
     private ElapsedTime turnTimeout;
     private ElapsedTime rollerTimeout;
-
+    private ElapsedTime hookHrzTimeout;
+    private ElapsedTime hookVrtTimeout;
+    private ElapsedTime DG_Timeout;
+    private ElapsedTime DE_Timeout;
     //final double TICKS_PER_INCH = 1120.0 / (4 * 3.14159265358979323846264);
     //final double ROBOT_RADIUS = 9.87;
     //final double TOLERANCE = ??;
@@ -42,7 +45,7 @@ public class SSDriveObject extends Object{
     //double convertion = 0;
 
 
-    public SSDriveObject(DcMotor FL, DcMotor FR, DcMotor BL, DcMotor BR, Servo HHRZ, Servo HVRT, Servo DG, Servo DR, CRServo DE, DcMotor RR, DcMotor RL, LinearOpMode parent){
+    public SSDriveObject(DcMotor FL, DcMotor FR, DcMotor BL, DcMotor BR, Servo HHRZ, Servo HVRT, Servo DG, Servo DR, CRServo DE, DcMotor RR, DcMotor RL, Servo RF, Servo LF, Servo BS, LinearOpMode parent){
         frontLeft = FL;
         frontRight = FR;
         backLeft = BL;
@@ -55,6 +58,9 @@ public class SSDriveObject extends Object{
         deliveryExtender = DE;
         rollerRight = RR;
         rollerLeft = RL;
+        leftFoundation = LF;
+        rightFoundation = RF;
+        blockSweeper = BS;
         //add delivery servos
         opmode = parent;
     }
@@ -320,5 +326,108 @@ public class SSDriveObject extends Object{
                 break;
         }
     }
+    public void setHookHrz (double position, int time) {
+        hookHrzTimeout = new ElapsedTime();
+        final int HOOKHRZ_TIMEOUT = time;
 
+        hookHrz.setPosition(position);
+
+        while (opmode.opModeIsActive()){
+            if (turnTimeout.milliseconds() > HOOKHRZ_TIMEOUT) {
+                break;
+            }
+        }
+    }
+
+
+    public void setHookVrt (double position, int time) {
+        hookVrtTimeout = new ElapsedTime();
+        final int HOOKVRT_TIMEOUT = time;
+
+        hookVrt.setPosition(position);
+
+        while (opmode.opModeIsActive()){
+            if (turnTimeout.milliseconds() > HOOKVRT_TIMEOUT){
+                break;
+            }
+        }
+    }
+
+    public void setCameraServo (double position) {
+        camera.setPosition(position);
+    }
+
+    /*public void setFoundationRight (boolean launch) {
+        //launch true = grabber down
+        //launch false = grabber up
+        if (launch) {
+            rightFoundation.setPosition(0);
+        }
+        else if (!launch) {
+            rightFoundation.setPosition(0.7);
+        }
+    }*/
+
+    public void setFoundationLeft (boolean launch) {
+        //launch true = grabber down
+        //launch false = grabber up
+        if (launch) {
+            leftFoundation.setPosition(0);
+            //rightFoundation.setPosition(0);
+        }
+        else if (!launch) {
+            leftFoundation.setPosition(0.7);
+            //rightFoundation.setPosition(0.7);
+        }
+    }
+
+    public void setBlockSweeper (boolean kick) {
+        //kick true = blockSweeper up
+        //kick false = blockSweeper down
+
+        if (kick) {
+            blockSweeper.setPosition(0.95);
+
+        } else if (!kick) {
+            blockSweeper.setPosition(0.25);
+
+        }
+    }
+
+    public void setDeliveryGrabber (double position, int time) {
+        DG_Timeout = new ElapsedTime();
+        final int DG_TIMEOUT = time;
+
+        deliveryGrabber.setPosition(position);
+
+        while (opmode.opModeIsActive()){
+            if (turnTimeout.milliseconds() > DG_TIMEOUT) {
+                break;
+            }
+        }
+    }
+
+    public void setDeliveryRotation (boolean rotate) {
+        //rotate true = rotate out
+        //rotate false = rotate in
+        if (rotate) {
+            leftFoundation.setPosition(0);
+        }
+        else if (!rotate) {
+            leftFoundation.setPosition(0.7);
+        }
+    }
+
+    public void setDeliveryExtender (double power, int time) {
+        DE_Timeout = new ElapsedTime();
+        final int DE_TIMEOUT = time;
+
+        deliveryExtender.setPower(power);
+
+        while (opmode.opModeIsActive()){
+            if (turnTimeout.milliseconds() > DE_TIMEOUT) {
+                break;
+            }
+        }
+    }
 }
