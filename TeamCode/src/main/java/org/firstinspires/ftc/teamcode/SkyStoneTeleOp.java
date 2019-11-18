@@ -96,8 +96,10 @@ public class SkyStoneTeleOp extends OpMode {
         //setDeliveryMotors();
         setFoundationGrabber();
         setHook();
+        setBlockSweeper();
         telemetry.addData("hookHrz", hookHrz.getPosition());
         telemetry.addData("hookVrt", hookVrt.getPosition());
+        telemetry.addData("blockSweeper", blockSweeper.getPosition());
     }
 
     private void setDriveMotors() {
