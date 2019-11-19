@@ -11,11 +11,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 /* TODO
    *setRollerMoter power
-
+    IMPORTANT no two grabbers
  */
 
 public class SSDriveObject extends Object{
-    Servo hookHrz, hookVrt, deliveryGrabber, deliveryRotation, camera, leftFoundation, rightFoundation, blockSweeper ;
+    Servo hookHrz, hookVrt, deliveryGrabberIn, deliveryGrabberOut, deliveryRotation, camera, leftFoundation, rightFoundation, blockSweeper ;
     CRServo deliveryExtender;
     DcMotor frontRight, frontLeft, backRight, backLeft, rollerRight, rollerLeft;
     LinearOpMode opmode;
@@ -45,7 +45,7 @@ public class SSDriveObject extends Object{
     //double convertion = 0;
 
 
-    public SSDriveObject(DcMotor FL, DcMotor FR, DcMotor BL, DcMotor BR, Servo HHRZ, Servo HVRT, Servo DG, Servo DR, CRServo DE, DcMotor RR, DcMotor RL, Servo RF, Servo LF, Servo BS, LinearOpMode parent){
+    public SSDriveObject(DcMotor FL, DcMotor FR, DcMotor BL, DcMotor BR, Servo HHRZ, Servo HVRT, Servo DGI, Servo DGO, Servo DR, CRServo DE, DcMotor RR, DcMotor RL, Servo RF, Servo LF, Servo BS, LinearOpMode parent){
         frontLeft = FL;
         frontRight = FR;
         backLeft = BL;
@@ -53,7 +53,8 @@ public class SSDriveObject extends Object{
         //check the teleop
         hookHrz = HHRZ;
         hookVrt = HVRT;
-        deliveryGrabber = DG;
+        deliveryGrabberIn = DGI;
+        deliveryGrabberOut = DGO;
         deliveryRotation = DR;
         deliveryExtender = DE;
         rollerRight = RR;
@@ -398,7 +399,8 @@ public class SSDriveObject extends Object{
         DG_Timeout = new ElapsedTime();
         final int DG_TIMEOUT = time;
 
-        deliveryGrabber.setPosition(position);
+        deliveryGrabberIn.setPosition(position);
+        deliveryGrabberOut.setPosition(position);
 
         while (opmode.opModeIsActive()){
             if (turnTimeout.milliseconds() > DG_TIMEOUT) {
