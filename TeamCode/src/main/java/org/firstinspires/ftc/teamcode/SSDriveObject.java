@@ -96,19 +96,26 @@ public class SSDriveObject extends Object{
         }*/
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeft.setTargetPosition(ticks);
         frontRight.setTargetPosition(ticks);
         backRight.setTargetPosition(ticks);
         backLeft.setTargetPosition(ticks);
 
+        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
+
         frontLeft.setPower(power);
         frontRight.setPower(power);
         backLeft.setPower(power);
         backRight.setPower(power);
 
-        while ((frontRight.isBusy() || frontLeft.isBusy()) && opmode.opModeIsActive()) ;
+        while ((frontRight.isBusy() || frontLeft.isBusy()) && opmode.opModeIsActive()) {
+            opmode.telemetry.addData("frontRight: ", frontRight.getCurrentPosition());
+            opmode.telemetry.addData("frontLeft: ", frontLeft.getCurrentPosition());
+            opmode.telemetry.addData("backRight: ", backRight.getCurrentPosition());
+            opmode.telemetry.addData("backLeft: ", backLeft.getCurrentPosition());
+            opmode.telemetry.update();
+        };
 
         stopDriving();
     }
@@ -122,12 +129,13 @@ public class SSDriveObject extends Object{
         }*/
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeft.setTargetPosition(ticks);
         frontRight.setTargetPosition(ticks);
         backRight.setTargetPosition(ticks);
         backLeft.setTargetPosition(ticks);
+
+        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
         driveTimeout = new ElapsedTime();
         frontLeft.setPower(power);
@@ -153,12 +161,14 @@ public class SSDriveObject extends Object{
         }*/
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
+
 
         frontLeft.setTargetPosition(ticks);
         frontRight.setTargetPosition(-ticks);
         backLeft.setTargetPosition(-ticks);
         backRight.setTargetPosition(ticks);
+
+        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeft.setPower(power);
         frontRight.setPower(power);
@@ -260,9 +270,9 @@ public class SSDriveObject extends Object{
 
         setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
-        frontLeft.setTargetPosition(-ticks);
+        frontLeft.setTargetPosition(ticks);
         frontRight.setTargetPosition(ticks);
-        backLeft.setTargetPosition(-ticks);
+        backLeft.setTargetPosition(ticks);
         backRight.setTargetPosition(ticks);
 
         frontLeft.setPower(power);

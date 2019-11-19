@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+
+@Autonomous(name="SSTestAutoOp", group="TeamCode")
 
 public class SSTestAutoOp extends LinearOpMode {
     DcMotor frontRight, frontLeft, backRight, backLeft, rightRoller, leftRoller;
@@ -35,6 +38,7 @@ public class SSTestAutoOp extends LinearOpMode {
 
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        //change frontLeft into reverse
         backRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
 
@@ -57,14 +61,16 @@ public class SSTestAutoOp extends LinearOpMode {
 
     }
     public void runOpMode(){
+        initialize();
+        waitForStart();
         //need a code to recognize skystones
         drive.driveDistance(1,100);
         sleep(10000);
-        drive.driveDistance(-1,100);
+        drive.driveDistance(1,-100);
         sleep(10000);
         drive.driveDistance(1,5);
         sleep(10000);
-        drive.driveDistance(-1,5);
+        drive.driveDistance(1,-5);
 
     }
 }

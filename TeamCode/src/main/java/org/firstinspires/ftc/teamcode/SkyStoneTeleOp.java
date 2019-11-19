@@ -61,6 +61,7 @@ public class SkyStoneTeleOp extends OpMode {
 
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        //need to be fixed*****************************************
         backRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
 
