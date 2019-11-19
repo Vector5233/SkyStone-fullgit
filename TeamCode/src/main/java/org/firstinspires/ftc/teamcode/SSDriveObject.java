@@ -10,7 +10,10 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /* TODO
-   *setRollerMoter power
+   To prevent robot from lumping at the endpoint
+   1) make function that makes the robot smoothly accelerating stars and stops
+   2) lowering the power
+   3) Having a function that calculates the ticks for a given distance
 
  */
 
@@ -21,7 +24,7 @@ public class SSDriveObject extends Object{
     LinearOpMode opmode;
      ModernRoboticsI2cGyro gyro;
 
-    final double TICKS_PER_INCH = 1120.0 / (4 * 3.14159265358979323846264);
+    final double TICKS_PER_INCH = (383.6*2) / (4 * 3.14159265358979323846264);
     final double ROBOT_RADIUS = 9.8;
     final double TOLERANCE = 2;  // in degrees
     final double MAXSPEED = 0.65;
@@ -33,8 +36,7 @@ public class SSDriveObject extends Object{
     private ElapsedTime hookVrtTimeout;
     private ElapsedTime DG_Timeout;
     private ElapsedTime DE_Timeout;
-    //final double TICKS_PER_INCH = 1120.0 / (4 * 3.14159265358979323846264);
-    //final double ROBOT_RADIUS = 9.87;
+
     //final double TOLERANCE = ??;
     //final double ROOT2 = 1.414;
     //final int CAMERA_MIDPOINT = ??;

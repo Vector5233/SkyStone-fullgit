@@ -65,9 +65,9 @@ public class SSTestAutoOp extends LinearOpMode {
         initialize();
         waitForStart();
         //need a code to recognize skystones
-        drive.driveDistance(1,100);
+        drive.driveDistance(1,30);
         sleep(10000);
-        drive.driveDistance(1,-100);
+        drive.driveDistance(1,-30);
         sleep(10000);
         drive.driveDistance(1,5);
         sleep(10000);
