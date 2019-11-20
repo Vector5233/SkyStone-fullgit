@@ -10,18 +10,21 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /* TODO
-   *setRollerMoter power
-    IMPORTANT no two grabbers
+   To prevent robot from lumping at the endpoint
+   1) make function that makes the robot smoothly accelerating stars and stops
+   2) lowering the power
+   3) Having a function that calculates the ticks for a given distance
+
  */
 
 public class SSDriveObject extends Object{
-    Servo hookHrz, hookVrt, deliveryGrabberIn, deliveryGrabberOut, deliveryRotation, camera, leftFoundation, rightFoundation, blockSweeper ;
+    Servo hookHrz, hookVrt, deliveryGrabber, deliveryRotation, camera, leftFoundation, rightFoundation, blockSweeper ;
     CRServo deliveryExtender;
     DcMotor frontRight, frontLeft, backRight, backLeft, rollerRight, rollerLeft;
     LinearOpMode opmode;
      ModernRoboticsI2cGyro gyro;
 
-    final double TICKS_PER_INCH = 1120.0 / (4 * 3.14159265358979323846264);
+    final double TICKS_PER_INCH = (383.6*2) / (4 * 3.14159265358979323846264);
     final double ROBOT_RADIUS = 9.8;
     final double TOLERANCE = 2;  // in degrees
     final double MAXSPEED = 0.65;
@@ -33,8 +36,7 @@ public class SSDriveObject extends Object{
     private ElapsedTime hookVrtTimeout;
     private ElapsedTime DG_Timeout;
     private ElapsedTime DE_Timeout;
-    //final double TICKS_PER_INCH = 1120.0 / (4 * 3.14159265358979323846264);
-    //final double ROBOT_RADIUS = 9.87;
+
     //final double TOLERANCE = ??;
     //final double ROOT2 = 1.414;
     //final int CAMERA_MIDPOINT = ??;
@@ -45,7 +47,7 @@ public class SSDriveObject extends Object{
     //double convertion = 0;
 
 
-    public SSDriveObject(DcMotor FL, DcMotor FR, DcMotor BL, DcMotor BR, Servo HHRZ, Servo HVRT, Servo DGI, Servo DGO, Servo DR, CRServo DE, DcMotor RR, DcMotor RL, Servo RF, Servo LF, Servo BS, LinearOpMode parent){
+    public SSDriveObject(DcMotor FL, DcMotor FR, DcMotor BL, DcMotor BR, Servo HHRZ, Servo HVRT, Servo DG, Servo DR, CRServo DE, DcMotor RR, DcMotor RL, Servo RF, Servo LF, Servo BS, LinearOpMode parent){
         frontLeft = FL;
         frontRight = FR;
         backLeft = BL;
@@ -53,8 +55,7 @@ public class SSDriveObject extends Object{
         //check the teleop
         hookHrz = HHRZ;
         hookVrt = HVRT;
-        deliveryGrabberIn = DGI;
-        deliveryGrabberOut = DGO;
+        deliveryGrabber = DG;
         deliveryRotation = DR;
         deliveryExtender = DE;
         rollerRight = RR;
@@ -97,19 +98,26 @@ public class SSDriveObject extends Object{
         }*/
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeft.setTargetPosition(ticks);
         frontRight.setTargetPosition(ticks);
         backRight.setTargetPosition(ticks);
         backLeft.setTargetPosition(ticks);
 
+        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
+
         frontLeft.setPower(power);
         frontRight.setPower(power);
         backLeft.setPower(power);
         backRight.setPower(power);
 
-        while ((frontRight.isBusy() || frontLeft.isBusy()) && opmode.opModeIsActive()) ;
+        while ((frontRight.isBusy() || frontLeft.isBusy()) && opmode.opModeIsActive()) {
+            opmode.telemetry.addData("frontRight: ", frontRight.getCurrentPosition());
+            opmode.telemetry.addData("frontLeft: ", frontLeft.getCurrentPosition());
+            opmode.telemetry.addData("backRight: ", backRight.getCurrentPosition());
+            opmode.telemetry.addData("backLeft: ", backLeft.getCurrentPosition());
+            opmode.telemetry.update();
+        };
 
         stopDriving();
     }
@@ -123,12 +131,13 @@ public class SSDriveObject extends Object{
         }*/
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeft.setTargetPosition(ticks);
         frontRight.setTargetPosition(ticks);
         backRight.setTargetPosition(ticks);
         backLeft.setTargetPosition(ticks);
+
+        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
         driveTimeout = new ElapsedTime();
         frontLeft.setPower(power);
@@ -154,12 +163,14 @@ public class SSDriveObject extends Object{
         }*/
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
+
 
         frontLeft.setTargetPosition(ticks);
         frontRight.setTargetPosition(-ticks);
         backLeft.setTargetPosition(-ticks);
         backRight.setTargetPosition(ticks);
+
+        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeft.setPower(power);
         frontRight.setPower(power);
@@ -261,9 +272,9 @@ public class SSDriveObject extends Object{
 
         setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
-        frontLeft.setTargetPosition(-ticks);
+        frontLeft.setTargetPosition(ticks);
         frontRight.setTargetPosition(ticks);
-        backLeft.setTargetPosition(-ticks);
+        backLeft.setTargetPosition(ticks);
         backRight.setTargetPosition(ticks);
 
         frontLeft.setPower(power);
@@ -399,8 +410,7 @@ public class SSDriveObject extends Object{
         DG_Timeout = new ElapsedTime();
         final int DG_TIMEOUT = time;
 
-        deliveryGrabberIn.setPosition(position);
-        deliveryGrabberOut.setPosition(position);
+        deliveryGrabber.setPosition(position);
 
         while (opmode.opModeIsActive()){
             if (turnTimeout.milliseconds() > DG_TIMEOUT) {
