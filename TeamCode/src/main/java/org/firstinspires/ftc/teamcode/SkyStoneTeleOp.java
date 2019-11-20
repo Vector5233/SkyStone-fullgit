@@ -91,7 +91,7 @@ public class SkyStoneTeleOp extends OpMode {
 
         deliveryRotation.setPosition(0.5);
         deliveryGrabber.setPosition(0.3);
-        blockSweeper.setPosition(0);
+        blockSweeper.setPosition(0.25);
 
         //factory reset servos
     }
