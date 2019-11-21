@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class SkyStoneTeleOp extends OpMode {
     DcMotor frontRight, frontLeft, backRight, backLeft, rightRoller, leftRoller, rightLift, leftLift;
-    Servo hookHrz, hookVrt, deliveryGrabber , deliveryRotation,leftFoundation, blockSweeper; //, rightFoundation;
+    Servo hookHrz, hookVrt, deliveryGrabber , deliveryRotation,leftFoundation, blockSweeper, capServo, cameraServo; //, rightFoundation;
     CRServo deliveryExtender;
 
     final double rollerPower = 1.0;
@@ -23,7 +23,7 @@ public class SkyStoneTeleOp extends OpMode {
 
     boolean if_pressedGp1X = false;
     boolean if_pressedGp1Y = false;
-    boolean if_pressedGp1A = false;
+    boolean if_pressedGp2A = false;
     boolean if_pressedGp1B = false;
 
     public void init() {
@@ -47,6 +47,10 @@ public class SkyStoneTeleOp extends OpMode {
         leftFoundation = hardwareMap.servo.get("leftFoundation");
 
         blockSweeper = hardwareMap.servo.get("blockSweeper");
+
+        capServo = hardwareMap.servo.get("capServo");
+
+        cameraServo = hardwareMap.servo.get("cameraServo");
 
         deliveryExtender = hardwareMap.crservo.get("deliveryExtender");
 
@@ -75,7 +79,6 @@ public class SkyStoneTeleOp extends OpMode {
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         deliveryGrabber.setPosition(0.2);
-
         blockSweeper.setPosition(1);
     }
 
@@ -87,7 +90,8 @@ public class SkyStoneTeleOp extends OpMode {
         setFoundationGrabber();
         setHook();
         setBlockSweeper();
-
+        setCapServo();
+        setCameraServo();
         telemetry.addData("hookHrz", hookHrz.getPosition());
         telemetry.addData("hookVrt", hookVrt.getPosition());
         telemetry.addData("blockSweeper", blockSweeper.getPosition());
@@ -227,9 +231,25 @@ public class SkyStoneTeleOp extends OpMode {
 
     public void setBlockSweeper () {
         if (gamepad1.a){
-            blockSweeper.setPosition(0.3);
+            blockSweeper.setPosition(0.6);
         } else {
             blockSweeper.setPosition(1);
+        }
+    }
+
+    public void setCapServo () {
+        if (gamepad2.a){
+            capServo.setPosition(0);
+        } else {
+            capServo.setPosition(1);
+        }
+    }
+
+    public void setCameraServo () {
+        if (gamepad2.x){
+            capServo.setPosition(0);
+        } else if (gamepad2.y){
+            capServo.setPosition(1);
         }
     }
 }
