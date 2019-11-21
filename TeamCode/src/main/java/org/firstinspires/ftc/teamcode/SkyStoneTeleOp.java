@@ -79,6 +79,7 @@ public class SkyStoneTeleOp extends OpMode {
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         deliveryGrabber.setPosition(0.2);
+
         blockSweeper.setPosition(1);
     }
 
@@ -140,11 +141,11 @@ public class SkyStoneTeleOp extends OpMode {
         deliveryExtender.setPower(gamepad2.right_stick_y);
 
         if (gamepad2.right_bumper == true) {
-            deliveryGrabber.setPosition(.6);
+            deliveryGrabber.setPosition(.675);
         }
 
         if (gamepad2.left_bumper == true) {
-            deliveryGrabber.setPosition(.8);
+            deliveryGrabber.setPosition(.75);
         }
 
         if  (gamepad2.right_trigger >= 0.5 && ifUnpressedRT) {
