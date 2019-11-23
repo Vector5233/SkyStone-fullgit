@@ -20,7 +20,7 @@ import java.util.List;
 
 public class SSTestAutoOp extends LinearOpMode {
     DcMotor frontRight, frontLeft, backRight, backLeft, rightRoller, leftRoller;
-    Servo hookHrz, hookVrt, deliveryGrabber, deliveryRotation, camera, leftFoundation, rightFoundation, blockSweeper ;
+    Servo hookHrz, hookVrt, deliveryGrabber, deliveryRotation, camera, leftFoundation, blockSweeper;
     CRServo deliveryExtender;
     LinearOpMode opmode;
     ModernRoboticsI2cGyro gyro;
@@ -32,7 +32,6 @@ public class SSTestAutoOp extends LinearOpMode {
 
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
-
 
     public void initialize(){
         frontRight = hardwareMap.dcMotor.get("frontRight");
@@ -87,10 +86,12 @@ public class SSTestAutoOp extends LinearOpMode {
         initialize();
         waitForStart();
 
+        /*
         if (tfod != null) {
             tfod.activate();
         }
         waitForStart();
+
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
@@ -113,6 +114,9 @@ public class SSTestAutoOp extends LinearOpMode {
         if (tfod != null) {
             tfod.shutdown();
         }
+
+
+         */
 
         drive.strafeDistance(0.5,30);
         sleep(10000);
