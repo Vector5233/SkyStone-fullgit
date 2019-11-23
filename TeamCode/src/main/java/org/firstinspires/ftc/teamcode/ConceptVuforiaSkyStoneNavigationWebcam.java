@@ -83,7 +83,6 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
  */
 
 @TeleOp(name="SKYSTONE Vuforia Nav Webcam", group ="Concept")
-@Disabled
 public class ConceptVuforiaSkyStoneNavigationWebcam extends LinearOpMode {
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
@@ -397,7 +396,7 @@ public class ConceptVuforiaSkyStoneNavigationWebcam extends LinearOpMode {
             else {
                 telemetry.addData("Visible Target", "none");
             }
-            
+
             telemetry.addData("Stone1 X: ", stone1X);
             telemetry.addData("Stone1 Y: ", stone1Y);
             telemetry.addData("Stone1 Z: ", stone1Z);
