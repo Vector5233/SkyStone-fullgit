@@ -145,7 +145,7 @@ public class SkyStoneTeleOp extends OpMode {
         }
 
         if (gamepad2.left_bumper == true) {
-            deliveryGrabber.setPosition(.42);
+            deliveryGrabber.setPosition(.435);
         }
 
         if  (gamepad2.right_trigger >= 0.5 && ifUnpressedRT) {
@@ -242,7 +242,7 @@ public class SkyStoneTeleOp extends OpMode {
         if (gamepad2.a){
             capServo.setPosition(0);
         } else {
-            capServo.setPosition(.9);
+            capServo.setPosition(.8);
         }
     }
 
