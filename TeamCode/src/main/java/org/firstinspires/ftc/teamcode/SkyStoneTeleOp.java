@@ -78,7 +78,7 @@ public class SkyStoneTeleOp extends OpMode {
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        deliveryGrabber.setPosition(0.2);
+        deliveryGrabber.setPosition(0.68);
 
         blockSweeper.setPosition(1);
     }
@@ -141,7 +141,7 @@ public class SkyStoneTeleOp extends OpMode {
         deliveryExtender.setPower(gamepad2.right_stick_y);
 
         if (gamepad2.right_bumper == true) {
-            deliveryGrabber.setPosition(.675);
+            deliveryGrabber.setPosition(.68);
         }
 
         if (gamepad2.left_bumper == true) {
@@ -232,7 +232,7 @@ public class SkyStoneTeleOp extends OpMode {
 
     public void setBlockSweeper () {
         if (gamepad1.a){
-            blockSweeper.setPosition(0.6);
+            blockSweeper.setPosition(0.725);
         } else {
             blockSweeper.setPosition(1);
         }
