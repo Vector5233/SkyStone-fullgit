@@ -80,7 +80,14 @@ public class SkyStoneTeleOp extends OpMode {
 
         deliveryGrabber.setPosition(0.35);
 
+        deliveryRotation.setPosition(0);
+
         blockSweeper.setPosition(1);
+
+        hookVrt.setPosition(0.7);
+        hookHrz.setPosition(0);
+
+        leftFoundation.setPosition(0.1);
     }
 
     public void loop() {
@@ -180,11 +187,11 @@ public class SkyStoneTeleOp extends OpMode {
 
     public void setHook() {
         if(!if_pressedGp1X && gamepad1.x) {
-            if (hookHrz.getPosition() >= 0.7 && hookHrz.getPosition() <= 1) {
+            if (hookHrz.getPosition() >= 0.5 && hookHrz.getPosition() <= 1) {
                 hookHrz.setPosition(0);
                 if_pressedGp1X = true;
-            } else if (hookHrz.getPosition() >= 0 && hookHrz.getPosition() < 0.3) {
-                hookHrz.setPosition(0.8);
+            } else if (hookHrz.getPosition() >= 0 && hookHrz.getPosition() < 0.5) {
+                hookHrz.setPosition(1);
                 if_pressedGp1X = true;
             }
         }
@@ -196,10 +203,10 @@ public class SkyStoneTeleOp extends OpMode {
         }
 
         if(!if_pressedGp1Y) {
-            if (gamepad1.y && (hookVrt.getPosition() >= 0.7 && hookVrt.getPosition() <= 1)) {
-                hookVrt.setPosition(0);
+            if (gamepad1.y && (hookVrt.getPosition() >= 0.75 && hookVrt.getPosition() <= 1)) {
+                hookVrt.setPosition(0.4);
                 if_pressedGp1Y = true;
-            } else if (gamepad1.y && (hookVrt.getPosition() >= 0 && hookVrt.getPosition() <= 0.3)) {
+            } else if (gamepad1.y && (hookVrt.getPosition() >= 0 && hookVrt.getPosition() <= 0.75)) {
                 hookVrt.setPosition(0.9);
                 if_pressedGp1Y = true;
             }
@@ -214,11 +221,11 @@ public class SkyStoneTeleOp extends OpMode {
 
     public void setFoundationGrabber() {
         if (gamepad1.b && !if_pressedGp1B){
-            if (leftFoundation.getPosition() >= 0.4) {
+            if (leftFoundation.getPosition() >= 0.5) {
                 leftFoundation.setPosition(0);
                 if_pressedGp1B = true;
             }
-            else if (leftFoundation.getPosition() <= 0.1) {
+            else if (leftFoundation.getPosition() <= 0.5) {
                 leftFoundation.setPosition(0.5);
                 if_pressedGp1B = true;
             }

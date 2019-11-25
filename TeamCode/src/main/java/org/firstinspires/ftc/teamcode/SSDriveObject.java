@@ -194,12 +194,13 @@ public class SSDriveObject extends Object{
         }*/
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeft.setTargetPosition(ticks);
         frontRight.setTargetPosition(-ticks);
         backLeft.setTargetPosition(-ticks);
         backRight.setTargetPosition(ticks);
+
+        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeft.setPower(power);
         frontRight.setPower(power);
@@ -231,12 +232,12 @@ public class SSDriveObject extends Object{
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
-
         frontLeft.setTargetPosition(-ticks);
         frontRight.setTargetPosition(ticks);
         backLeft.setTargetPosition(-ticks);
         backRight.setTargetPosition(ticks);
+
+        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeft.setPower(power);
         frontRight.setPower(power);
@@ -270,12 +271,12 @@ public class SSDriveObject extends Object{
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
-
         frontLeft.setTargetPosition(ticks);
         frontRight.setTargetPosition(ticks);
         backLeft.setTargetPosition(ticks);
         backRight.setTargetPosition(ticks);
+
+        setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeft.setPower(power);
         frontRight.setPower(power);

@@ -30,6 +30,25 @@ public class SSTestAutoOp extends LinearOpMode {
     private static final String LABEL_FIRST_ELEMENT = "Stone";
     private static final String LABEL_SECOND_ELEMENT = "Skystone";
 
+    final double WEBCAM_TO_BLOCKS = 9.5;
+
+    final double CENTER_PIXELS = 0;
+    final double BLOCK_LENGTH = 8;
+    final double ARM_TO_WEBCAM = 9;
+
+    double inchPerPixel = 0;
+
+    double LS_leftPixel = 0;
+    double LS_rightPixel = 0;
+
+    double RS_leftPixel = 0;
+    double RS_rightPixel = 0;
+
+    double SS_leftPixel = 0;
+    double SS_rightPixel = 0;
+
+    double displacement = 0;
+
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
@@ -86,13 +105,38 @@ public class SSTestAutoOp extends LinearOpMode {
         initialize();
         waitForStart();
 
-        /*
         if (tfod != null) {
             tfod.activate();
         }
-        waitForStart();
 
+        //drive.strafeDistance(-1, 24.5, 1000);
+        detectStones();
+        getDisplacement();
+        //collect
+        //drive till fnd
+        //find navi img
+        //cw 90
+        //deliver
+        //ccw 90
+        //drive back til block
+        //collect
+        //drive till fnd
+        //cw 90
+        //deliver
+        //strafe till line
+        //park
+        //init for teleop
+    }
 
+    public void initTfod(){
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minimumConfidence = 0.8;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+    }
+
+    public void detectStones(){
         if (opModeIsActive()) {
             while (opModeIsActive()) {
                 if (tfod != null) {
@@ -100,10 +144,29 @@ public class SSTestAutoOp extends LinearOpMode {
                     if (updatedRecognitions != null) {
                         telemetry.addData("# Object Detected", updatedRecognitions.size());
                         int i = 0;
+                        int stoneCount = 0;
                         for (Recognition recognition : updatedRecognitions) {
+                            if(recognition.getLabel().equals("Skystone")){
+                                SS_leftPixel = recognition.getLeft();
+                                SS_rightPixel = recognition.getRight();
+                            } else if(recognition.getLabel().equals("Stone")){
+                                stoneCount ++;
+                                telemetry.addData("stone count", stoneCount);
+
+                                if(i == 0){
+                                    RS_rightPixel = recognition.getRight();
+                                    RS_leftPixel = recognition.getLeft();
+                                } else if(i == 1){
+                                    LS_rightPixel = recognition.getRight();
+                                    LS_leftPixel = recognition.getLeft();
+                                }
+
+                                if(stoneCount == 2){
+                                    createVirtualStone();
+                                }
+                            }
                             telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                            telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f", recognition.getLeft(), recognition.getTop());
-                            telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f", recognition.getRight(), recognition.getBottom());
+                            telemetry.addData("  left,right ", "%.03f , %.03f", recognition.getLeft(), recognition.getRight());
                         }
                         telemetry.update();
                     }
@@ -114,24 +177,25 @@ public class SSTestAutoOp extends LinearOpMode {
         if (tfod != null) {
             tfod.shutdown();
         }
-
-
-         */
-
-        drive.strafeDistance(0.5,30);
-        sleep(10000);
-        drive.strafeDistance(0.5,-30);
-        sleep(10000);
-        drive.strafeDistance(0.5,5);
-        sleep(10000);
-        drive.strafeDistance(0.5,-5);
     }
 
-    public void initTfod(){
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minimumConfidence = 0.8;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+    public void createVirtualStone(){
+        double RS_size = RS_rightPixel - RS_leftPixel;
+        double LS_size = LS_rightPixel - LS_leftPixel;
+
+        SS_leftPixel = Math.max(RS_rightPixel, LS_rightPixel);
+        SS_rightPixel = SS_leftPixel + (RS_size + LS_size)/2;
+
+        telemetry.addData("  Virtual left", "%.03f", SS_leftPixel);
+        telemetry.addData("  Virtual right", "%.03f", SS_rightPixel);
+        telemetry.update();
+    }
+
+    public void getDisplacement(){
+        inchPerPixel = BLOCK_LENGTH/(SS_rightPixel - SS_leftPixel);
+        telemetry.addData("  inch / pixel", "%.03f", inchPerPixel);
+        displacement = ((5/8)*(SS_rightPixel - SS_leftPixel) + SS_leftPixel - CENTER_PIXELS)*inchPerPixel - ARM_TO_WEBCAM;
+        telemetry.addData("  displacement", "%.03f", displacement);
+        telemetry.update();
     }
 }

@@ -82,9 +82,8 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
  * is explained below.
  */
 
-@TeleOp(name="SKYSTONE Vuforia Nav Webcam", group ="Concept")
-@Disabled
-public class ConceptVuforiaSkyStoneNavigationWebcam extends LinearOpMode {
+@TeleOp(name="webcam detection test", group ="Concept")
+public class VfSkyStoneNaviWebCamTest extends LinearOpMode {
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
@@ -103,7 +102,7 @@ public class ConceptVuforiaSkyStoneNavigationWebcam extends LinearOpMode {
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY =
-            " --- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+            "AbLVQDn/////AAABma+zV9cCqU+7pLBUXgQ3J6II1u1B8Vg4mrnGfVawPjc1l7C6GWoddOaL6Wqj5kXPBVUh3U3WND38234Tm0h3+LKmmTzzaVPRwOk3J+zBwKlOvv93+u7chctULk8ZYEyf0NuuEfsGwpgJx7xL9hIFBoaB2G1SpbJIt+n94wz6EvfRYSusBEiST/lUqgDISIlaeOLPWEipHh46axomcrGVRRl09pg6pCt2h7rU6us+guN5nKhupTXvM+BTUYW3kCO9YsUjz16jLr7GyFh8wVQbRS3dikSX7kzVsdkLjZnJdyinYaB5oDXfmmXtaC6ZXeD6vKs62vpaydAq9VGAlCtnSyq2J4NLI+LOIOvdtsCwarfS";
 
     // Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
     // We will define some constants and conversions here
@@ -139,14 +138,6 @@ public class ConceptVuforiaSkyStoneNavigationWebcam extends LinearOpMode {
     private float phoneYRotate    = 0;
     private float phoneZRotate    = 0;
 
-    float stone1X = 0;
-    float stone1Y = 0;
-    float stone1Z = 0;
-    float stone2X = 0;
-    float stone2Y = 0;
-    float stone2Z = 0;
-
-
     @Override public void runOpMode() {
         /*
          * Retrieve the camera we are to use.
@@ -177,10 +168,8 @@ public class ConceptVuforiaSkyStoneNavigationWebcam extends LinearOpMode {
         // sets are stored in the 'assets' part of our application.
         VuforiaTrackables targetsSkyStone = this.vuforia.loadTrackablesFromAsset("Skystone");
 
-        VuforiaTrackable stoneTarget1 = targetsSkyStone.get(0);
-        stoneTarget1.setName("Stone Target 1");
-        VuforiaTrackable stoneTarget2 = targetsSkyStone.get(0);
-        stoneTarget2.setName("Stone Target 2");
+        VuforiaTrackable stoneTarget = targetsSkyStone.get(0);
+        stoneTarget.setName("Stone Target");
         VuforiaTrackable blueRearBridge = targetsSkyStone.get(1);
         blueRearBridge.setName("Blue Rear Bridge");
         VuforiaTrackable redRearBridge = targetsSkyStone.get(2);
@@ -211,8 +200,7 @@ public class ConceptVuforiaSkyStoneNavigationWebcam extends LinearOpMode {
         allTrackables.addAll(targetsSkyStone);
 
         List<VuforiaTrackable> stoneTrackables = new ArrayList<VuforiaTrackable>();
-        stoneTrackables.add(stoneTarget1);
-        stoneTrackables.add(stoneTarget2);
+        stoneTrackables.add(stoneTarget);
 
         /**
          * In order for localization to work, we need to tell the system where each target is on the field, and
@@ -235,11 +223,7 @@ public class ConceptVuforiaSkyStoneNavigationWebcam extends LinearOpMode {
         // Set the position of the Stone Target.  Since it's not fixed in position, assume it's at the field origin.
         // Rotated it to to face forward, and raised it to sit on the ground correctly.
         // This can be used for generic target-centric approach algorithms
-        stoneTarget1.setLocation(OpenGLMatrix
-                .translation(0, 0, stoneZ)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90)));
-
-        stoneTarget2.setLocation(OpenGLMatrix
+        stoneTarget.setLocation(OpenGLMatrix
                 .translation(0, 0, stoneZ)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90)));
 
@@ -317,7 +301,7 @@ public class ConceptVuforiaSkyStoneNavigationWebcam extends LinearOpMode {
         // Rotate the phone vertical about the X axis if it's in portrait mode
         if (PHONE_IS_PORTRAIT) {
             phoneXRotate = 90 ;
-        }
+         }
 
         // Next, translate the camera lens to where it is on the robot.
         // In this example, it is centered (left to right), but forward of the middle of the robot, and above ground level.
@@ -330,7 +314,7 @@ public class ConceptVuforiaSkyStoneNavigationWebcam extends LinearOpMode {
                     .multiplied(Orientation.getRotationMatrix(EXTRINSIC, YZX, DEGREES, phoneYRotate, phoneZRotate, phoneXRotate));
 
         /**  Let all the trackable listeners know where the phone is.  */
-        for (VuforiaTrackable trackable : allTrackables) {
+        for (VuforiaTrackable trackable : stoneTrackables) {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
         }
 
@@ -351,20 +335,13 @@ public class ConceptVuforiaSkyStoneNavigationWebcam extends LinearOpMode {
 
             // check all the trackable targets to see which one (if any) is visible.
             targetVisible = false;
-            //for (VuforiaTrackable trackable : allTrackables) {
-            for (VuforiaTrackable trackable : stoneTrackables) {
+            for (VuforiaTrackable trackable : allTrackables) {
                 if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                    if(trackable.getName().equals("Stone Target")){
-                        targetVisible = true;
-                    }
-                    /*
                     telemetry.addData("Visible Target", trackable.getName());
                     targetVisible = true;
-                     */
 
                     // getUpdatedRobotLocation() will return null if no new information is available since
                     // the last time that call was made, or if the trackable is not currently visible.
-
                     OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
                     if (robotLocationTransform != null) {
                         lastLocation = robotLocationTransform;
@@ -377,18 +354,8 @@ public class ConceptVuforiaSkyStoneNavigationWebcam extends LinearOpMode {
             if (targetVisible) {
                 // express position (translation) of robot in inches.
                 VectorF translation = lastLocation.getTranslation();
-                //telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f", translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-
-                if(stone1X != 0 && (stone1Y != 0 && stone1Z != 0)){
-                    stone2X = translation.get(0);
-                    stone2Y = translation.get(1);
-                    stone2Z = translation.get(2);
-                }
-                else{
-                    stone1X = translation.get(0);
-                    stone1Y = translation.get(1);
-                    stone1Z = translation.get(2);
-                }
+                telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+                        translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
 
                 // express the rotation of the robot in degrees.
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
@@ -397,15 +364,6 @@ public class ConceptVuforiaSkyStoneNavigationWebcam extends LinearOpMode {
             else {
                 telemetry.addData("Visible Target", "none");
             }
-
-            telemetry.addData("Stone1 X: ", stone1X);
-            telemetry.addData("Stone1 Y: ", stone1Y);
-            telemetry.addData("Stone1 Z: ", stone1Z);
-
-            telemetry.addData("Stone2 X: ", stone2X);
-            telemetry.addData("Stone2 Y: ", stone2Y);
-            telemetry.addData("Stone2 Z: ", stone2Z);
-
             telemetry.update();
         }
 
