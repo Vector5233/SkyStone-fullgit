@@ -18,6 +18,8 @@ public class SkyStoneTeleOp extends OpMode {
     final int maxLift = 700;
     final int minLift = 0;
 
+    final String BACK = "BACK";
+
     boolean ifUnpressedRT = true;
     boolean ifUnpressedLT = true;
 
@@ -25,6 +27,8 @@ public class SkyStoneTeleOp extends OpMode {
     boolean if_pressedGp1Y = false;
     boolean if_pressedGp2A = false;
     boolean if_pressedGp1B = false;
+
+    String state = null;
 
     public void init() {
         frontRight = hardwareMap.dcMotor.get("frontRight");
@@ -260,4 +264,16 @@ public class SkyStoneTeleOp extends OpMode {
             cameraServo.setPosition(1);
         }
     }
+
+    public void automizingGrabber () {
+        if(deliveryGrabber.getPosition() == 0.35){
+            state = BACK;
+        }
+        switch(state){
+            case BACK:
+                deliveryGrabber.setPosition(0.435);
+                break;
+        }
+    }
+
 }
