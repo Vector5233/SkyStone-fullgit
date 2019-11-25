@@ -193,8 +193,8 @@ public class SkyStoneTeleOp extends OpMode {
             deliveryGrabber.setPosition(.435);
         }
 
-        if (gamepad2.right_trigger >= 0.5 && ifUnpressedRT) {
-            if (deliveryRotation.getPosition() < 0.25) {
+        if  (gamepad2.right_trigger >= 0.5 && ifUnpressedRT) {
+            if(deliveryRotation.getPosition() < 0.25) {
                 deliveryRotation.setPosition(0.5);
                 telemetry.addData("Grabber", deliveryRotation.getPosition());
                 ifUnpressedRT = false;
@@ -344,17 +344,11 @@ public class SkyStoneTeleOp extends OpMode {
 
     public void deliveryRotationtest() {
         if (gamepad2.y) {
-            ExtenderState = rotationNotIn;
+            RotationState = rotationNotIn;
         }
 
-        switch (ExtenderState) {
+        switch (RotationState) {
             case rotationNotIn:
-                deliveryRotation.setPosition(0);
-                ExtenderState = rotationIn;
-                break;
-
-            case rotationIn:
-                deliveryRotation.setPosition(0);
 
         }
     }
