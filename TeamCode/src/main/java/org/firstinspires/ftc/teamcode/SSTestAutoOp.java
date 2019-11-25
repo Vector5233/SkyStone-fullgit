@@ -131,7 +131,7 @@ public class SSTestAutoOp extends LinearOpMode {
     public void initTfod(){
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minimumConfidence = 0.8;
+        tfodParameters.minimumConfidence = 0.6;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
@@ -166,11 +166,13 @@ public class SSTestAutoOp extends LinearOpMode {
                                 }
                             }
                             telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                            telemetry.addData("  left,right ", "%.03f , %.03f", recognition.getLeft(), recognition.getRight());
+                            telemetry.addData("  left", "%.03f", recognition.getLeft());
+                            telemetry.addData("  right", "%.03f", recognition.getRight());
                         }
-                        telemetry.update();
                     }
                 }
+
+                telemetry.update();
             }
         }
 
