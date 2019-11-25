@@ -18,6 +18,8 @@ public class SkyStoneTeleOp extends OpMode {
     final int maxLift = 700;
     final int minLift = 0;
 
+    final String rotationNotIn = "RotationNotIn";
+
     boolean ifUnpressedRT = true;
     boolean ifUnpressedLT = true;
 
@@ -99,7 +101,7 @@ public class SkyStoneTeleOp extends OpMode {
         setHook();
         setBlockSweeper();
         setCapServo();
-        setCameraServo();
+        //setCameraServo();
         telemetry.addData("hookHrz", hookHrz.getPosition());
         telemetry.addData("hookVrt", hookVrt.getPosition());
         telemetry.addData("blockSweeper", blockSweeper.getPosition());
@@ -253,11 +255,69 @@ public class SkyStoneTeleOp extends OpMode {
         }
     }
 
-    public void setCameraServo () {
+    /*public void setCameraServo () {
         if (gamepad2.x){
             cameraServo.setPosition(0);
         } else if (gamepad2.y){
             cameraServo.setPosition(1);
         }
     }
+98
+    public void automatingDelivery () {
+
+    }
+*/
+    public void setLayerLift () {
+        // need to measure the height of block and double-check with Jayden
+        if (gamepad2.dpad_up) {
+            leftLift.setPower(1);
+            rightLift.setPower(1);
+
+            if (leftLift.getCurrentPosition()  == 1) {
+                stop();
+            }
+        }
+
+        else if (gamepad2.dpad_down) {
+            leftLift.setPower(-1);
+            rightLift.setPower(-1);
+
+            /*if (leftLift.getCurrentPosition()  == x + height_of_Block) {
+                stop();
+            }
+            
+             */
+        }
+    }
+/*
+    public void automizingGrabberTest () {
+            switch (state){
+            case liftBack:
+
+
+
+        }
+    }
+
+ */
+
+    String state = null;
+
+    public void deliveryExtendertest () {
+        loop(); {
+            if(gamepad2.y){
+                state = rotationNotIn;
+            }
+            switch (state) {
+
+                case rotationNotIn:
+                deliveryGrabber.setPosition (0);
+
+
+            }
+        }
+    }
+
+
+
 }
