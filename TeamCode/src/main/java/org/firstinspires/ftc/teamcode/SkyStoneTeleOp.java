@@ -1,9 +1,14 @@
 package org.firstinspires.ftc.teamcode;
+import android.app.Notification;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import java.util.Timer;
 
 @TeleOp(name="SkyStoneTeleOp", group="TeamCode")
 
@@ -19,8 +24,26 @@ public class SkyStoneTeleOp extends OpMode {
     final int minLift = 0;
 
     final String BACK = "BACK";
+    final String FORWARD = "FORWARD";
 
     final String rotationNotIn = "RotationNotIn";
+    final String rotationIn = "rotationIn";
+    final String rotationIning = "rotationIning";
+    final String rotationNotIning = "rotationNotIning";
+    final String extenderIn = "extenderIn";
+    final String extenderMovingOut = "extenderMovingOut";
+    final String extenderMovingIn = "extenderMovingIn";
+    final String extenderOut = "extenderOut";
+
+    final String grabberOpen = "grabberOpen";
+    final String grabberClose = "grabberClose";
+    final String grabberClosing = "grabberClosing";
+    final String grabberOpening = "grabberOpening";
+
+    final String liftUp = "liftUp";
+    final String liftDown = "liftDown";
+
+
 
     boolean ifUnpressedRT = true;
     boolean ifUnpressedLT = true;
@@ -30,7 +53,17 @@ public class SkyStoneTeleOp extends OpMode {
     boolean if_pressedGp2A = false;
     boolean if_pressedGp1B = false;
 
-    String state = null;
+    String GrabberState = null;
+    String LiftGrabberState = null;
+    String RotationState = null;
+    String ExtenderState = null;
+
+    ElapsedTime grabberTime = new ElapsedTime();
+    final int GRABBERTIMEOUT = 400;
+    ElapsedTime rotationTime = new ElapsedTime();
+    final int ROTATIONTIMEOUT = 500;
+    ElapsedTime extenderTime = new ElapsedTime();
+    final int EXTENDERIMEOUT = 500;
 
     public void init() {
         frontRight = hardwareMap.dcMotor.get("frontRight");
@@ -94,6 +127,7 @@ public class SkyStoneTeleOp extends OpMode {
         hookHrz.setPosition(0);
 
         leftFoundation.setPosition(0.1);
+        // set all states here
     }
 
     public void loop() {
@@ -101,6 +135,7 @@ public class SkyStoneTeleOp extends OpMode {
         setRollerMotors();
         setLiftMotors();
         setDeliveryMotors();
+        setGrabber();
         setFoundationGrabber();
         setHook();
         setBlockSweeper();
@@ -259,6 +294,38 @@ public class SkyStoneTeleOp extends OpMode {
         }
     }
 
+    public void setGrabber() {
+        switch (GrabberState) {
+            case grabberOpen:
+                deliveryGrabber.setPosition(0.35);
+                grabberTime.reset();
+                break;
+            case grabberClose:
+                deliveryGrabber.setPosition(0.435);
+                grabberTime.reset();
+                break;
+
+            case grabberOpening:
+                deliveryGrabber.setPosition(0.35);
+                if (grabberTime.milliseconds() >= GRABBERTIMEOUT) {
+                    GrabberState = grabberOpen;
+                }
+                break;
+            case grabberClosing:
+                deliveryGrabber.setPosition(0.435);
+                if (grabberTime.milliseconds() >= GRABBERTIMEOUT) {
+                    GrabberState = grabberClose;
+                }
+                break;
+            case liftDown:
+                if(leftLift.getPower() == -1) {
+                    deliveryGrabber.setPosition(0.435);
+                }
+                break;
+        }
+
+    }
+
     /*public void setCameraServo () {
         if (gamepad2.x){
             cameraServo.setPosition(0);
@@ -266,7 +333,7 @@ public class SkyStoneTeleOp extends OpMode {
             cameraServo.setPosition(1);
         }
     }
-98
+
     public void automatingDelivery () {
 
     }
@@ -278,60 +345,27 @@ public class SkyStoneTeleOp extends OpMode {
             rightLift.setPower(1);
 
             if (leftLift.getCurrentPosition()  == 1) {
-                stop();
+                //max 767.2
+                leftLift.setPower(0);
+                rightLift.setPower(0);
             }
         }
 
         else if (gamepad2.dpad_down) {
             leftLift.setPower(-1);
             rightLift.setPower(-1);
-
-            /*if (leftLift.getCurrentPosition()  == x + height_of_Block) {
-                stop();
-            }
-
-             */
-        }
-    }
-/*
-    public void automizingGrabberTest () {
-            switch (state){
-            case liftBack:
-
-
-
         }
     }
 
- */
-
-    public void deliveryExtendertest () {
-        loop(); {
-            if(gamepad2.y){
-                state = rotationNotIn;
-            }
-            switch (state) {
-
-                case rotationNotIn:
-                deliveryGrabber.setPosition (0);
-
-
-            }
+    public void deliveryRotationtest () {
+        if(gamepad2.y){
+                RotationState = rotationNotIn;
         }
+
+        switch (RotationState) {
+            case rotationNotIn:
+                
     }
 
-
-
-
-    public void automizingGrabber () {
-        if(deliveryGrabber.getPosition() == 0.35){
-            state = BACK;
-        }
-        switch(state){
-            case BACK:
-                deliveryGrabber.setPosition(0.435);
-                break;
-        }
-    }
 
 }
