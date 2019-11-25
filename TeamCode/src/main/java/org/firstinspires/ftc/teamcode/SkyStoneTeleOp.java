@@ -14,7 +14,7 @@ import java.util.Timer;
 
 public class SkyStoneTeleOp extends OpMode {
     DcMotor frontRight, frontLeft, backRight, backLeft, rightRoller, leftRoller, rightLift, leftLift;
-    Servo hookHrz, hookVrt, deliveryGrabber , deliveryRotation,leftFoundation, blockSweeper, capServo, cameraServo; //, rightFoundation;
+    Servo hookHrz, hookVrt, deliveryGrabber, deliveryRotation, leftFoundation, blockSweeper, capServo, cameraServo; //, rightFoundation;
     CRServo deliveryExtender;
 
     final double rollerPower = 1.0;
@@ -42,7 +42,6 @@ public class SkyStoneTeleOp extends OpMode {
 
     final String liftUp = "liftUp";
     final String liftDown = "liftDown";
-
 
 
     boolean ifUnpressedRT = true;
@@ -73,7 +72,7 @@ public class SkyStoneTeleOp extends OpMode {
 
         rightRoller = hardwareMap.dcMotor.get("rightRoller");
         leftRoller = hardwareMap.dcMotor.get("leftRoller");
-        
+
         rightLift = hardwareMap.dcMotor.get("rightLift");
         leftLift = hardwareMap.dcMotor.get("leftLift");
 
@@ -147,37 +146,35 @@ public class SkyStoneTeleOp extends OpMode {
     }
 
     private void setDriveMotors() {
-        frontRight.setPower(- gamepad1.right_stick_x - gamepad1.right_stick_y - gamepad1.left_stick_x);
-        frontLeft.setPower( gamepad1.right_stick_x - gamepad1.right_stick_y + gamepad1.left_stick_x);
+        frontRight.setPower(-gamepad1.right_stick_x - gamepad1.right_stick_y - gamepad1.left_stick_x);
+        frontLeft.setPower(gamepad1.right_stick_x - gamepad1.right_stick_y + gamepad1.left_stick_x);
         backRight.setPower(gamepad1.right_stick_x - gamepad1.right_stick_y - gamepad1.left_stick_x);
-        backLeft.setPower(- gamepad1.right_stick_x - gamepad1.right_stick_y + gamepad1.left_stick_x);
+        backLeft.setPower(-gamepad1.right_stick_x - gamepad1.right_stick_y + gamepad1.left_stick_x);
     }
-    
-    private void setRollerMotors(){
-        if(gamepad1.right_bumper == true){
+
+    private void setRollerMotors() {
+        if (gamepad1.right_bumper == true) {
             rightRoller.setPower(rollerPower);
             leftRoller.setPower(rollerPower);
-        } else if(gamepad1.left_bumper == true){
+        } else if (gamepad1.left_bumper == true) {
             rightRoller.setPower(-rollerPower);
             leftRoller.setPower(-rollerPower);
-        } else{
+        } else {
             rightRoller.setPower(0);
             leftRoller.setPower(0);
         }
     }
 
-    private void setLiftMotors()  {
+    private void setLiftMotors() {
         // TODO consider carefully what actions could harm the lift and how to avoid doing those things
         //if(minLift <= leftLift.getCurrentPosition() &&leftLift.getCurrentPosition() <= maxLift) {
-        if(gamepad2.left_stick_y > 0.5) {
+        if (gamepad2.left_stick_y > 0.5) {
             rightLift.setPower(gamepad2.left_stick_y * 0.1);
             leftLift.setPower(gamepad2.left_stick_y * 0.1);
-        }
-        else if(gamepad2.left_stick_y < -0.5    ) {
+        } else if (gamepad2.left_stick_y < -0.5) {
             rightLift.setPower(gamepad2.left_stick_y * 0.8);
             leftLift.setPower(gamepad2.left_stick_y * 0.8);
-        }
-        else{
+        } else {
             rightLift.setPower(0);
             leftLift.setPower(0);
         }
@@ -196,38 +193,34 @@ public class SkyStoneTeleOp extends OpMode {
             deliveryGrabber.setPosition(.435);
         }
 
-        if  (gamepad2.right_trigger >= 0.5 && ifUnpressedRT) {
-            if(deliveryRotation.getPosition() < 0.25) {
+        if (gamepad2.right_trigger >= 0.5 && ifUnpressedRT) {
+            if (deliveryRotation.getPosition() < 0.25) {
                 deliveryRotation.setPosition(0.5);
                 telemetry.addData("Grabber", deliveryRotation.getPosition());
                 ifUnpressedRT = false;
-            }
-            else if(0.25 < deliveryRotation.getPosition() && deliveryRotation.getPosition() < 0.75) {
+            } else if (0.25 < deliveryRotation.getPosition() && deliveryRotation.getPosition() < 0.75) {
                 deliveryRotation.setPosition(1);
                 telemetry.addData("Grabber", deliveryRotation.getPosition());
                 ifUnpressedRT = false;
             }
-        }
-        else
+        } else
             ifUnpressedRT = true;
 
         if (gamepad2.left_trigger >= 0.5 && ifUnpressedLT) {
-            if(0.75 < deliveryRotation.getPosition()) {
+            if (0.75 < deliveryRotation.getPosition()) {
                 deliveryRotation.setPosition(0.5);
                 ifUnpressedLT = false;
-            }
-            else if(0.25 < deliveryRotation.getPosition() && deliveryRotation.getPosition() < 0.75) {
+            } else if (0.25 < deliveryRotation.getPosition() && deliveryRotation.getPosition() < 0.75) {
                 deliveryRotation.setPosition(0);
                 ifUnpressedLT = false;
             }
-        }
-        else{
+        } else {
             ifUnpressedLT = true;
         }
     }
 
     public void setHook() {
-        if(!if_pressedGp1X && gamepad1.x) {
+        if (!if_pressedGp1X && gamepad1.x) {
             if (hookHrz.getPosition() >= 0.5 && hookHrz.getPosition() <= 1) {
                 hookHrz.setPosition(0);
                 if_pressedGp1X = true;
@@ -235,15 +228,13 @@ public class SkyStoneTeleOp extends OpMode {
                 hookHrz.setPosition(1);
                 if_pressedGp1X = true;
             }
-        }
-
-        else {
-            if(!gamepad1.x) {
+        } else {
+            if (!gamepad1.x) {
                 if_pressedGp1X = false;
             }
         }
 
-        if(!if_pressedGp1Y) {
+        if (!if_pressedGp1Y) {
             if (gamepad1.y && (hookVrt.getPosition() >= 0.75 && hookVrt.getPosition() <= 1)) {
                 hookVrt.setPosition(0.4);
                 if_pressedGp1Y = true;
@@ -251,43 +242,39 @@ public class SkyStoneTeleOp extends OpMode {
                 hookVrt.setPosition(0.9);
                 if_pressedGp1Y = true;
             }
-        }
-
-        else {
-            if(!gamepad1.y) {
+        } else {
+            if (!gamepad1.y) {
                 if_pressedGp1Y = false;
             }
         }
     }
 
     public void setFoundationGrabber() {
-        if (gamepad1.b && !if_pressedGp1B){
+        if (gamepad1.b && !if_pressedGp1B) {
             if (leftFoundation.getPosition() >= 0.5) {
                 leftFoundation.setPosition(0);
                 if_pressedGp1B = true;
-            }
-            else if (leftFoundation.getPosition() <= 0.5) {
+            } else if (leftFoundation.getPosition() <= 0.5) {
                 leftFoundation.setPosition(0.5);
                 if_pressedGp1B = true;
             }
-        }
-        else {
-            if(!gamepad1.b) {
+        } else {
+            if (!gamepad1.b) {
                 if_pressedGp1B = false;
             }
         }
     }
 
-    public void setBlockSweeper () {
-        if (gamepad1.a){
+    public void setBlockSweeper() {
+        if (gamepad1.a) {
             blockSweeper.setPosition(0.725);
         } else {
             blockSweeper.setPosition(1);
         }
     }
 
-    public void setCapServo () {
-        if (gamepad2.a){
+    public void setCapServo() {
+        if (gamepad2.a) {
             capServo.setPosition(0);
         } else {
             capServo.setPosition(.8);
@@ -318,7 +305,7 @@ public class SkyStoneTeleOp extends OpMode {
                 }
                 break;
             case liftDown:
-                if(leftLift.getPower() == -1) {
+                if (leftLift.getPower() == -1) {
                     deliveryGrabber.setPosition(0.435);
                 }
                 break;
@@ -338,34 +325,33 @@ public class SkyStoneTeleOp extends OpMode {
 
     }
 */
-    public void setLayerLift () {
+    public void setLayerLift() {
         // need to measure the height of block and double-check with Jayden
         if (gamepad2.dpad_up) {
             leftLift.setPower(1);
             rightLift.setPower(1);
 
-            if (leftLift.getCurrentPosition()  == 1) {
+            if (leftLift.getCurrentPosition() == 1) {
                 //max 767.2
                 leftLift.setPower(0);
                 rightLift.setPower(0);
             }
-        }
-
-        else if (gamepad2.dpad_down) {
+        } else if (gamepad2.dpad_down) {
             leftLift.setPower(-1);
             rightLift.setPower(-1);
         }
     }
 
-    public void deliveryRotationtest () {
-        if(gamepad2.y){
-                RotationState = rotationNotIn;
+    public void deliveryRotationtest() {
+        if (gamepad2.y) {
+            RotationState = rotationNotIn;
         }
 
         switch (RotationState) {
             case rotationNotIn:
-                
+
+        }
+
+
     }
-
-
 }

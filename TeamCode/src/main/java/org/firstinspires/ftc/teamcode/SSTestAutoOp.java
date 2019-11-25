@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -32,9 +33,11 @@ public class SSTestAutoOp extends LinearOpMode {
 
     final double WEBCAM_TO_BLOCKS = 9.5;
 
-    final double CENTER_PIXELS = 0;
+    final double CENTER_PIXELS = 400;
     final double BLOCK_LENGTH = 8;
     final double ARM_TO_WEBCAM = 9;
+
+    final int TFOD_TIMEOUT = 500;
 
     double inchPerPixel = 0;
 
@@ -48,6 +51,10 @@ public class SSTestAutoOp extends LinearOpMode {
     double SS_rightPixel = 0;
 
     double displacement = 0;
+
+    boolean isVirtual = false;
+
+    private ElapsedTime tfodTimeout;
 
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
@@ -100,18 +107,25 @@ public class SSTestAutoOp extends LinearOpMode {
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         initTfod();
+
+        if (tfod != null) {
+            tfod.activate();
+        }
     }
     public void runOpMode(){
         initialize();
         waitForStart();
 
-        if (tfod != null) {
-            tfod.activate();
-        }
-
         //drive.strafeDistance(-1, 24.5, 1000);
         detectStones();
+        telemetry.addData("  SS left", "%.03f", SS_leftPixel);
+        telemetry.addData("  SS right", "%.03f", SS_rightPixel);
+        telemetry.update();
+        sleep(1000);
         getDisplacement();
+
+        //displacement & displacement - 24
+
         //collect
         //drive till fnd
         //find navi img
@@ -138,66 +152,72 @@ public class SSTestAutoOp extends LinearOpMode {
 
     public void detectStones(){
         if (opModeIsActive()) {
+            tfodTimeout = new ElapsedTime();
+
             while (opModeIsActive()) {
                 if (tfod != null) {
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
                         telemetry.addData("# Object Detected", updatedRecognitions.size());
+
                         int i = 0;
-                        int stoneCount = 0;
+                        boolean skyFlag = false;
+
                         for (Recognition recognition : updatedRecognitions) {
-                            if(recognition.getLabel().equals("Skystone")){
-                                SS_leftPixel = recognition.getLeft();
-                                SS_rightPixel = recognition.getRight();
-                            } else if(recognition.getLabel().equals("Stone")){
-                                stoneCount ++;
-                                telemetry.addData("stone count", stoneCount);
-
-                                if(i == 0){
-                                    RS_rightPixel = recognition.getRight();
-                                    RS_leftPixel = recognition.getLeft();
-                                } else if(i == 1){
-                                    LS_rightPixel = recognition.getRight();
-                                    LS_leftPixel = recognition.getLeft();
-                                }
-
-                                if(stoneCount == 2){
-                                    createVirtualStone();
-                                }
-                            }
                             telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
                             telemetry.addData("  left", "%.03f", recognition.getLeft());
                             telemetry.addData("  right", "%.03f", recognition.getRight());
+
+                            if(recognition.getLabel().equals("Skystone")){
+                                SS_leftPixel = recognition.getLeft();
+                                SS_rightPixel = recognition.getRight();
+                                skyFlag = true;
+                                break;
+                            }
+                        }
+                        telemetry.update();
+                        sleep(1000);
+
+                        if(!skyFlag) {
+                            isVirtual = true;
+                            createVirtualStone(updatedRecognitions.get(0).getRight(), updatedRecognitions.get(0).getLeft(), updatedRecognitions.get(1).getRight(), updatedRecognitions.get(0).getLeft());
                         }
                     }
                 }
-
-                telemetry.update();
+                if (tfodTimeout.milliseconds() >= TFOD_TIMEOUT) {
+                    tfod.shutdown();
+                    telemetry.addLine("Tfod Terminated");
+                    telemetry.update();
+                    break;
+                }
             }
-        }
-
-        if (tfod != null) {
-            tfod.shutdown();
         }
     }
 
-    public void createVirtualStone(){
-        double RS_size = RS_rightPixel - RS_leftPixel;
-        double LS_size = LS_rightPixel - LS_leftPixel;
+    public void createVirtualStone(double S1_rightPixel, double S1_leftPixel, double S2_rightPixel, double S2_leftPixel){
+        double S1_size = S1_rightPixel - S1_leftPixel;
+        double S2_size = S2_rightPixel - S2_leftPixel;
 
-        SS_leftPixel = Math.max(RS_rightPixel, LS_rightPixel);
-        SS_rightPixel = SS_leftPixel + (RS_size + LS_size)/2;
+        SS_leftPixel = Math.max(S1_rightPixel, S2_rightPixel);
+        SS_rightPixel = SS_leftPixel + (S1_size + S2_size)/2;
 
-        telemetry.addData("  Virtual left", "%.03f", SS_leftPixel);
-        telemetry.addData("  Virtual right", "%.03f", SS_rightPixel);
+        telemetry.addLine("Skystone virtually created");
         telemetry.update();
     }
 
     public void getDisplacement(){
-        inchPerPixel = BLOCK_LENGTH/(SS_rightPixel - SS_leftPixel);
-        telemetry.addData("  inch / pixel", "%.03f", inchPerPixel);
-        displacement = ((5/8)*(SS_rightPixel - SS_leftPixel) + SS_leftPixel - CENTER_PIXELS)*inchPerPixel - ARM_TO_WEBCAM;
-        telemetry.addData("  displacement", "%.03f", displacement);
+        inchPerPixel = Math.abs(BLOCK_LENGTH/(SS_rightPixel - SS_leftPixel));
+        telemetry.addData("inch / pixel", "%.03f", inchPerPixel);
+
+        //displacement = ((5/8)*(SS_rightPixel - SS_leftPixel) + SS_leftPixel - CENTER_PIXELS)*inchPerPixel - ARM_TO_WEBCAM;
+        if(250 <= SS_rightPixel && SS_rightPixel <= 500)
+            displacement = inchPerPixel*(SS_rightPixel - CENTER_PIXELS) - ARM_TO_WEBCAM + 13;
+        else if(600 <= SS_rightPixel && SS_rightPixel <= 800)
+            displacement = inchPerPixel*(SS_leftPixel - CENTER_PIXELS) - ARM_TO_WEBCAM + 5;
+        else if(isVirtual)
+            displacement = inchPerPixel*(CENTER_PIXELS + SS_rightPixel - 2*SS_leftPixel) - ARM_TO_WEBCAM + 15;
+
+        telemetry.addData("displacement", "%.03f", displacement);
         telemetry.update();
     }
 }
