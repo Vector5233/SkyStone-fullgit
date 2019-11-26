@@ -68,7 +68,7 @@ public class SkyStoneTeleOp extends OpMode {
     String ExtenderState = null;
 
     ElapsedTime grabberTime = new ElapsedTime();
-    final int GRABBERTIMEOUT = 150;
+    final int GRABBERTIMEOUT = 200;
     ElapsedTime rotationTime = new ElapsedTime();
     final int ROTATIONTIMEOUT = 500;
     ElapsedTime extenderTime = new ElapsedTime();
@@ -151,6 +151,8 @@ public class SkyStoneTeleOp extends OpMode {
         setHook();
         setBlockSweeper();
         setCapServo();
+        setDeliveryRotation();
+        setDeliveryExtender();
         //setCameraServo();
         telemetry.addData("hookHrz", hookHrz.getPosition());
         telemetry.addData("hookVrt", hookVrt.getPosition());
@@ -183,7 +185,8 @@ public class SkyStoneTeleOp extends OpMode {
         final double THRESHOLD = 0.5;
         // TODO consider carefully what actions could harm the lift and how to avoid doing those things
         //if(minLift <= leftLift.getCurrentPosition() &&leftLift.getCurrentPosition() <= maxLift) {
-        if (gamepad2.left_stick_y > THRESHOLD) {
+        if (gamepad2.left_stick_y < -THRESHOLD) {
+            // lifting down
             if (GrabberState == grabberClose) {
                 rightLift.setPower(gamepad2.left_stick_y * DOWNPOWER);
                 leftLift.setPower(gamepad2.left_stick_y * DOWNPOWER);
@@ -191,9 +194,18 @@ public class SkyStoneTeleOp extends OpMode {
             else {
                 GrabberState = grabberClosing;
             }
-        } else if (gamepad2.left_stick_y < -THRESHOLD) {
-            rightLift.setPower(gamepad2.left_stick_y * UPPOWER);
-            leftLift.setPower(gamepad2.left_stick_y * UPPOWER);
+        } else if (gamepad2.left_stick_y > THRESHOLD) {
+            // lifting Up
+            if (GrabberState == grabberClose) {
+                rightLift.setPower(gamepad2.left_stick_y * UPPOWER);
+                leftLift.setPower(gamepad2.left_stick_y * UPPOWER);
+            }
+            else {
+                GrabberState = grabberClosing;
+                // Since the grabber was automatically opened during either lifting up or down, I
+                // just wrote the code "GrabberState == grabberClose" in both lifting up and down
+
+            }
         } else {
             rightLift.setPower(0);
             leftLift.setPower(0);
@@ -205,6 +217,7 @@ public class SkyStoneTeleOp extends OpMode {
     private void setDeliveryMotors() {
         deliveryExtender.setPower(gamepad2.right_stick_y);
 
+        /*
         if (gamepad2.right_bumper == true) {
             deliveryGrabber.setPosition(.35);
         }
@@ -213,7 +226,9 @@ public class SkyStoneTeleOp extends OpMode {
             deliveryGrabber.setPosition(.435);
         }
 
-        if  (gamepad2.right_trigger >= 0.5 && ifUnpressedRT) {
+         */
+
+        /*if  (gamepad2.right_trigger >= 0.5 && ifUnpressedRT) {
             if(deliveryRotation.getPosition() < 0.25) {
                 deliveryRotation.setPosition(0.5);
                 telemetry.addData("Grabber", deliveryRotation.getPosition());
@@ -237,7 +252,11 @@ public class SkyStoneTeleOp extends OpMode {
         } else {
             ifUnpressedLT = true;
         }
+
+         */
     }
+
+
 
     public void setHook() {
         if (!if_pressedGp1X && gamepad1.x) {
@@ -302,6 +321,9 @@ public class SkyStoneTeleOp extends OpMode {
     }
 
     public void setDeliveryGrabber() {
+        telemetry.addData("grabber state", GrabberState);
+        telemetry.update();
+
         switch (GrabberState) {
             case grabberOpen:
                 //deliveryGrabber.setPosition(0.35);
@@ -384,7 +406,7 @@ public class SkyStoneTeleOp extends OpMode {
             case extenderOut:
                 // There is no way to code the position of continuous servo...
                 extenderTime.reset();
-                if (gamepad2.right_stick_y >= 0.5 && EXTENDERIMEOUT >= maxExtenderTime) {
+                if (gamepad2.right_stick_y <= -0.5 && EXTENDERIMEOUT >= maxExtenderTime) {
                     if (RotationState == rotationIn){
                         ExtenderState = extenderMovingIn;
                     }
@@ -397,7 +419,7 @@ public class SkyStoneTeleOp extends OpMode {
                 break;
             case extenderIn:
                 extenderTime.reset();
-                if (gamepad2.right_stick_y <= -0.5 && EXTENDERIMEOUT >= maxExtenderTime) {
+                if (gamepad2.right_stick_y >= 0.5 && EXTENDERIMEOUT >= maxExtenderTime) {
                     if (RotationState == rotationIn){
                         ExtenderState = extenderMovingOut;
                     }
@@ -467,7 +489,7 @@ public class SkyStoneTeleOp extends OpMode {
                 }
                 break;
             case rotationMovingIn:
-                deliveryRotation.setPosition(0.5);
+                deliveryRotation.setPosition(0);
                 if (rotationTime.milliseconds() >= ROTATIONTIMEOUT) {
                     RotationState = rotationIn;
                 }
@@ -480,7 +502,7 @@ public class SkyStoneTeleOp extends OpMode {
                 }
                 break;
             case rotationMovingHalf:
-                deliveryRotation.setPosition(0.75);
+                deliveryRotation.setPosition(0.5);
                 if (rotationTime.milliseconds() >= ROTATIONTIMEOUT) {
                     RotationState = rotationHalf;
                 }
