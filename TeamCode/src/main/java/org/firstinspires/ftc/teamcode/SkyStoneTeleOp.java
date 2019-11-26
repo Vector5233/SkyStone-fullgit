@@ -68,7 +68,7 @@ public class SkyStoneTeleOp extends OpMode {
     String ExtenderState = null;
 
     ElapsedTime grabberTime = new ElapsedTime();
-    final int GRABBERTIMEOUT = 400;
+    final int GRABBERTIMEOUT = 700;
     ElapsedTime rotationTime = new ElapsedTime();
     final int ROTATIONTIMEOUT = 500;
     ElapsedTime extenderTime = new ElapsedTime();
@@ -467,7 +467,7 @@ public class SkyStoneTeleOp extends OpMode {
                 }
                 break;
             case rotationMovingIn:
-                deliveryRotation.setPosition(0);
+                deliveryRotation.setPosition(0.5);
                 if (rotationTime.milliseconds() >= ROTATIONTIMEOUT) {
                     RotationState = rotationIn;
                 }
@@ -480,11 +480,16 @@ public class SkyStoneTeleOp extends OpMode {
                 }
                 break;
             case rotationMovingHalf:
-                deliveryRotation.setPosition(0.5);
+                deliveryRotation.setPosition(0.75);
                 if (rotationTime.milliseconds() >= ROTATIONTIMEOUT) {
                     RotationState = rotationHalf;
                 }
                 break;
         }
     }
+
+
+
 }
+
+
