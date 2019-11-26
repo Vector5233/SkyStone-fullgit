@@ -24,7 +24,8 @@ public class SSDriveObject extends Object{
     LinearOpMode opmode;
      ModernRoboticsI2cGyro gyro;
 
-    final double TICKS_PER_INCH = (383.6*2) / (4 * 3.14159265358979323846264);
+    final double TICKS_PER_INCH_STRAIGHT = (383.6*2) / (4 * 3.14159265358979323846264);
+    final double TICKS_PER_INCH_STRAFE = ((383.6*2) / (4 * 3.14159265358979323846264))*1.414;
     final double ROBOT_RADIUS = 9.8;
     final double TOLERANCE = 2;  // in degrees
     final double MAXSPEED = 0.65;
@@ -91,7 +92,7 @@ public class SSDriveObject extends Object{
     }
 
     public void driveDistance(double power, double distance) {
-        int ticks = (int) (distance * TICKS_PER_INCH);
+        int ticks = (int) (distance * TICKS_PER_INCH_STRAIGHT);
 
         /*if (power > MAXSPEED) {
             power = MAXSPEED;
@@ -124,7 +125,7 @@ public class SSDriveObject extends Object{
 
     public void driveDistance(double power, double distance, int time) {
         int DRIVE_TIMEOUT = time;
-        int ticks = (int) (distance * TICKS_PER_INCH);
+        int ticks = (int) (distance * TICKS_PER_INCH_STRAIGHT);
 
         /*if (power > MAXSPEED) {
             power = MAXSPEED;
@@ -156,7 +157,7 @@ public class SSDriveObject extends Object{
     }
 
     public void strafeDistance(double power, double distance) {
-        int ticks = (int) (distance * TICKS_PER_INCH);
+        int ticks = (int) (distance * TICKS_PER_INCH_STRAFE);
 
         /*if (power > MAXSPEED) {
             power = MAXSEED;
@@ -187,7 +188,7 @@ public class SSDriveObject extends Object{
         strafeTimeout = new ElapsedTime();
         int STRAFE_TIMEOUT = time;
 
-        int ticks = (int) (distance * TICKS_PER_INCH);
+        int ticks = (int) (distance * TICKS_PER_INCH_STRAFE);
 
         /*if power > MAXSPEED {
             power = MAXSPEED
@@ -218,7 +219,7 @@ public class SSDriveObject extends Object{
     public void turnDegree(double power, double degrees) {
         // distance in inches
         //conjecture instead of moving 12", wheels will go 12"*cos(45)= 8.5"
-        int ticks = (int) ((2 * 3.14159 / 360) * degrees * ROBOT_RADIUS * TICKS_PER_INCH);
+        int ticks = (int) ((2 * 3.14159 / 360) * degrees * ROBOT_RADIUS * TICKS_PER_INCH_STRAIGHT);
 
         /*if (power > MAXSPEED) {
             power = MAXSPEED;
@@ -259,7 +260,7 @@ public class SSDriveObject extends Object{
         final int TURN_TIMEOUT = time;
 
         // distance in inches
-        int ticks = (int) ((2 * 3.14159 / 360) * degrees * ROBOT_RADIUS * TICKS_PER_INCH);
+        int ticks = (int) ((2 * 3.14159 / 360) * degrees * ROBOT_RADIUS * TICKS_PER_INCH_STRAIGHT);
 
         /*if (power > MAXSPEED) {
             power = MAXSPEED;
