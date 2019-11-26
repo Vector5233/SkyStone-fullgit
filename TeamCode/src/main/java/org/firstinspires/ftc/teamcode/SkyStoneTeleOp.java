@@ -290,6 +290,8 @@ public class SkyStoneTeleOp extends OpMode {
     }
 
     public void setGrabber() {
+        telemetry.addData("grabber state:  ", GrabberState);
+        telemetry.update();
         switch (GrabberState) {
             case grabberOpen:
                 //deliveryGrabber.setPosition(0.35);
