@@ -18,6 +18,7 @@ public class SkyStoneTeleOp extends OpMode {
     CRServo deliveryExtender;
 
     final double rollerPower = 1.0;
+    final double maxExtenderTime = 300; // need to be fixed by using the timer
 
     //test required
     final int maxLift = 700;
@@ -135,6 +136,8 @@ public class SkyStoneTeleOp extends OpMode {
         hookHrz.setPosition(0);
 
         leftFoundation.setPosition(0.1);
+
+        deliveryGrabber.setPosition(0.35);
         // set all states here
     }
 
@@ -336,7 +339,7 @@ public class SkyStoneTeleOp extends OpMode {
                 }
                 break;
             case grabberClosing:
-            default:
+            //default:
                 deliveryGrabber.setPosition(0.435);
                 if (grabberTime.milliseconds() >= GRABBERTIMEOUT) {
                     GrabberState = grabberClose;
@@ -382,11 +385,11 @@ public class SkyStoneTeleOp extends OpMode {
                 // There is no way to code the position of continuous servo...
                 extenderTime.reset();
                 if (gamepad2.right_stick_y >= 0.5 && EXTENDERIMEOUT >= maxExtenderTime) {
-                    if (rotationIn){
+                    if (RotationState == rotationIn){
                         ExtenderState = extenderMovingIn;
                     }
                     else {
-                        rotationState = rotationMovingIn;
+                        RotationState = rotationMovingIn;
                     }
 
                 }
@@ -395,11 +398,11 @@ public class SkyStoneTeleOp extends OpMode {
             case extenderIn:
                 extenderTime.reset();
                 if (gamepad2.right_stick_y <= -0.5 && EXTENDERIMEOUT >= maxExtenderTime) {
-                    if (rotationIn){
+                    if (RotationState == rotationIn){
                         ExtenderState = extenderMovingOut;
                     }
                     else {
-                        rotationState = rotationMovingIn;
+                        RotationState = rotationMovingIn;
                     }
 
                 }
@@ -464,28 +467,24 @@ public class SkyStoneTeleOp extends OpMode {
                 }
                 break;
             case rotationMovingIn:
-                if (ExtenderState == extenderOut) {
-                    if (rotationTime.milliseconds() >= ROTATIONTIMEOUT) {
-                        RotationState = rotationIn;
-                    }
+                deliveryRotation.setPosition(0);
+                if (rotationTime.milliseconds() >= ROTATIONTIMEOUT) {
+                    RotationState = rotationIn;
                 }
+
                 break;
             case rotationMovingOut:
-                if (ExtenderState == extenderOut) {
-                    if (rotationTime.milliseconds() >= ROTATIONTIMEOUT) {
-                        RotationState = rotationOut;
-                    }
+                deliveryRotation.setPosition(1);
+                if (rotationTime.milliseconds() >= ROTATIONTIMEOUT) {
+                    RotationState = rotationOut;
                 }
                 break;
             case rotationMovingHalf:
-                if (ExtenderState == extenderOut) {
-                    if (rotationTime.milliseconds() >= ROTATIONTIMEOUT) {
-                        RotationState = rotationHalf;
-                    }
+                deliveryRotation.setPosition(0.5);
+                if (rotationTime.milliseconds() >= ROTATIONTIMEOUT) {
+                    RotationState = rotationHalf;
                 }
                 break;
         }
     }
-
-   
 }
