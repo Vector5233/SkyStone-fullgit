@@ -183,8 +183,14 @@ public class SkyStoneTeleOp extends OpMode {
                 GrabberState = grabberClosing;
             }
         } else if (gamepad2.left_stick_y < -THRESHOLD) {
-            rightLift.setPower(gamepad2.left_stick_y * UPPOWER);
-            leftLift.setPower(gamepad2.left_stick_y * UPPOWER);
+            if (GrabberState == grabberClose) {
+                rightLift.setPower(gamepad2.left_stick_y * UPPOWER);
+                leftLift.setPower(gamepad2.left_stick_y * UPPOWER);
+            }
+            else {
+                GrabberState = grabberClose;
+            }
+
         } else {
             rightLift.setPower(0);
             leftLift.setPower(0);

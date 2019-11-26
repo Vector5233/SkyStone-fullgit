@@ -25,7 +25,7 @@ public class SSDriveObject extends Object{
      ModernRoboticsI2cGyro gyro;
 
     final double TICKS_PER_INCH_STRAIGHT = (383.6*2) / (4 * 3.14159265358979323846264);
-    final double TICKS_PER_INCH_STRAFE = ((383.6*2) / (4 * 3.14159265358979323846264))*1.414;
+    final double TICKS_PER_INCH_STRAFE = ((383.6*2) / (4 * 3.14159265358979323846264))*1.15;
     final double ROBOT_RADIUS = 9.8;
     final double TOLERANCE = 2;  // in degrees
     final double MAXSPEED = 0.65;
@@ -124,6 +124,7 @@ public class SSDriveObject extends Object{
     }
 
     public void driveDistance(double power, double distance, int time) {
+        driveTimeout = new ElapsedTime();
         int DRIVE_TIMEOUT = time;
         int ticks = (int) (distance * TICKS_PER_INCH_STRAIGHT);
 
@@ -140,7 +141,6 @@ public class SSDriveObject extends Object{
 
         setModeAll(DcMotor.RunMode.RUN_TO_POSITION);
 
-        driveTimeout = new ElapsedTime();
         frontLeft.setPower(power);
         frontRight.setPower(power);
         backRight.setPower(power);

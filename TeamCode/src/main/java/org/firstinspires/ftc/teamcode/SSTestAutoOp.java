@@ -120,7 +120,7 @@ public class SSTestAutoOp extends LinearOpMode {
         initialize();
         waitForStart();
 
-        drive.strafeDistance(-1, 24.5, 1000);
+        drive.strafeDistance(1, -24.5, 1000);
         detectStones();
         getDisplacement();
         collectSkyStone();
@@ -222,7 +222,9 @@ public class SSTestAutoOp extends LinearOpMode {
     public void collectSkyStone(){
         hookVrt.setPosition(0.7);
         hookHrz.setPosition(1);
+        sleep(500);
         drive.driveDistance(0.5, displacement, 1000);
+        sleep(200);
 
         drive.setHookVrt(0.4, 500);
         leftRoller.setPower(1);

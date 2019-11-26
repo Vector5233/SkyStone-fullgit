@@ -68,9 +68,9 @@ public class DriveTestAutoOp extends LinearOpMode {
         initialize();
         waitForStart();
 
-        drive.strafeDistance(1, 40, 5000);
+        drive.strafeDistance(1, 20, 5000);
         sleep(1000);
-        drive.strafeDistance(1, -40, 5000);
+        drive.strafeDistance(1, -5, 5000);
         sleep(50);
 
         /*
