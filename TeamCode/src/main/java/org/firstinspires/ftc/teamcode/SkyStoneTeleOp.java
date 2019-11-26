@@ -72,7 +72,7 @@ public class SkyStoneTeleOp extends OpMode {
     ElapsedTime rotationTime = new ElapsedTime();
     final int ROTATIONTIMEOUT = 500;
     ElapsedTime extenderTime = new ElapsedTime();
-    final int EXTENDERIMEOUT = 500;
+    final int EXTENDERTIMEOUT = 500;
 
     public void init() {
         frontRight = hardwareMap.dcMotor.get("frontRight");
@@ -128,7 +128,9 @@ public class SkyStoneTeleOp extends OpMode {
 
         GrabberState = grabberClosing;
 
-        deliveryRotation.setPosition(0);
+        RotationState = rotationMovingIn;
+
+        ExtenderState = extenderIn;
 
         blockSweeper.setPosition(1);
 
@@ -187,32 +189,25 @@ public class SkyStoneTeleOp extends OpMode {
         //if(minLift <= leftLift.getCurrentPosition() &&leftLift.getCurrentPosition() <= maxLift) {
         if (gamepad2.left_stick_y < -THRESHOLD) {
             // lifting down
-            if (GrabberState == grabberClose) {
-                rightLift.setPower(gamepad2.left_stick_y * DOWNPOWER);
-                leftLift.setPower(gamepad2.left_stick_y * DOWNPOWER);
-            }
-            else {
-                GrabberState = grabberClosing;
-            }
+
+            rightLift.setPower(gamepad2.left_stick_y * DOWNPOWER);
+            leftLift.setPower(gamepad2.left_stick_y * DOWNPOWER);
+
         } else if (gamepad2.left_stick_y > THRESHOLD) {
             // lifting Up
-            if (GrabberState == grabberClose) {
-                rightLift.setPower(gamepad2.left_stick_y * UPPOWER);
-                leftLift.setPower(gamepad2.left_stick_y * UPPOWER);
-            }
-            else {
-                GrabberState = grabberClosing;
-                // Since the grabber was automatically opened during either lifting up or down, I
-                // just wrote the code "GrabberState == grabberClose" in both lifting up and down
+            rightLift.setPower(gamepad2.left_stick_y * UPPOWER);
+            leftLift.setPower(gamepad2.left_stick_y * UPPOWER);
 
-            }
+            // Since the grabber was automatically opened during either lifting up or down, I
+            // just wrote the code "GrabberState == grabberClose" in both lifting up and down
+
         } else {
             rightLift.setPower(0);
             leftLift.setPower(0);
         }
-        // }
-
     }
+
+
 
     private void setDeliveryMotors() {
         deliveryExtender.setPower(gamepad2.right_stick_y);
@@ -406,7 +401,7 @@ public class SkyStoneTeleOp extends OpMode {
             case extenderOut:
                 // There is no way to code the position of continuous servo...
                 extenderTime.reset();
-                if (gamepad2.right_stick_y <= -0.5 && EXTENDERIMEOUT >= maxExtenderTime) {
+                if (gamepad2.right_stick_y <= -0.5 /*&& EXTENDERTIMEOUT >= maxExtenderTime*/) {
                     if (RotationState == rotationIn){
                         ExtenderState = extenderMovingIn;
                     }
@@ -419,7 +414,7 @@ public class SkyStoneTeleOp extends OpMode {
                 break;
             case extenderIn:
                 extenderTime.reset();
-                if (gamepad2.right_stick_y >= 0.5 && EXTENDERIMEOUT >= maxExtenderTime) {
+                if (gamepad2.right_stick_y >= 0.5 /*&& EXTENDERTIMEOUT >= maxExtenderTime*/) {
                     if (RotationState == rotationIn){
                         ExtenderState = extenderMovingOut;
                     }
@@ -433,13 +428,14 @@ public class SkyStoneTeleOp extends OpMode {
 
             case extenderMovingIn:
                 deliveryExtender.setPower(1);
-                if (extenderTime.milliseconds() >= EXTENDERIMEOUT) {
+                if (extenderTime.milliseconds() >= EXTENDERTIMEOUT) {
                     ExtenderState = extenderIn;
                 }
                 break;
+
             case extenderMovingOut:
                 deliveryExtender.setPower(-1);
-                if (extenderTime.milliseconds() >= EXTENDERIMEOUT) {
+                if (extenderTime.milliseconds() >= EXTENDERTIMEOUT) {
                     ExtenderState = extenderOut;
                 }
                 break;
@@ -460,6 +456,15 @@ public class SkyStoneTeleOp extends OpMode {
                     else {
                         if_pressedDpadDown = false;
                     }
+                    if (gamepad2.dpad_left||gamepad2.dpad_right) {
+                        if (!if_pressedDpadHrz) {
+                            RotationState = rotationMovingHalf;
+                            if_pressedDpadHrz = true;
+                        }
+                    }
+                    else {
+                        if_pressedDpadHrz = false;
+                    }
                 }
                 break;
             case rotationOut:
@@ -473,10 +478,6 @@ public class SkyStoneTeleOp extends OpMode {
                     else {
                         if_pressedDpadUp = false;
                     }
-                }
-                break;
-            case rotationHalf:
-                if (ExtenderState == extenderOut) { // not sure about this commented by Wyatt
                     if (gamepad2.dpad_left||gamepad2.dpad_right) {
                         if (!if_pressedDpadHrz) {
                             RotationState = rotationMovingHalf;
@@ -485,6 +486,28 @@ public class SkyStoneTeleOp extends OpMode {
                     }
                     else {
                         if_pressedDpadHrz = false;
+                    }
+                }
+                break;
+            case rotationHalf:
+                if (ExtenderState == extenderOut) { // not sure about this commented by Wyatt
+                    if (gamepad2.dpad_down) {
+                        if (!if_pressedDpadDown) {
+                            RotationState = rotationMovingIn;
+                            if_pressedDpadDown = true;
+                        }
+                    }
+                    else {
+                        if_pressedDpadDown = false;
+                    }
+                    if (gamepad2.dpad_up) {
+                        if (!if_pressedDpadUp) {
+                            RotationState = rotationMovingOut;
+                            if_pressedDpadUp = true;
+                        }
+                    }
+                    else {
+                        if_pressedDpadUp = false;
                     }
                 }
                 break;

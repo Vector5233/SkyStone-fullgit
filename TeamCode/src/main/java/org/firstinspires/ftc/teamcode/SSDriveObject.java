@@ -151,7 +151,7 @@ public class SSDriveObject extends Object{
                 break;
         }
 
-        telemetryDcMotor();
+        //telemetryDcMotor();
 
         stopDriving();
     }
