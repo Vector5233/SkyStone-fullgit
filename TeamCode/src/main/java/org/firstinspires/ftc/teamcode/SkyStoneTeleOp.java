@@ -126,7 +126,13 @@ public class SkyStoneTeleOp extends OpMode {
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        GrabberState = grabberClosing;
+        GrabberState = grabberOpen;
+        RotationState = rotationIn;
+        /*ExtenderState = extenderIn;
+        
+         */
+
+
 
         RotationState = rotationMovingIn;
 
