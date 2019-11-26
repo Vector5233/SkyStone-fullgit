@@ -345,6 +345,7 @@ public class SkyStoneTeleOp extends OpMode {
     public void deliveryRotationtest() {
         if (gamepad2.y) {
             RotationState = rotationNotIn;
+
         }
 
         switch (RotationState) {

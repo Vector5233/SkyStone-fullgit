@@ -51,6 +51,7 @@ public class SSTestAutoOp extends LinearOpMode {
     double SS_rightPixel = 0;
 
     double displacement = 0;
+    double secondDisplacement = displacement - 24;
 
     boolean isVirtual = false;
 
@@ -106,6 +107,9 @@ public class SSTestAutoOp extends LinearOpMode {
 
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
+        drive.setHookHrz(0.5, 500);
+        drive.setHookVrt(0.4, 500);
+
         initTfod();
 
         if (tfod != null) {
@@ -116,17 +120,11 @@ public class SSTestAutoOp extends LinearOpMode {
         initialize();
         waitForStart();
 
-        //drive.strafeDistance(-1, 24.5, 1000);
+        drive.strafeDistance(-1, 24.5, 1000);
         detectStones();
-        telemetry.addData("  SS left", "%.03f", SS_leftPixel);
-        telemetry.addData("  SS right", "%.03f", SS_rightPixel);
-        telemetry.update();
-        sleep(1000);
         getDisplacement();
+        collectSkyStone();
 
-        //displacement & displacement - 24
-
-        //collect
         //drive till fnd
         //find navi img
         //cw 90
@@ -219,5 +217,23 @@ public class SSTestAutoOp extends LinearOpMode {
 
         telemetry.addData("displacement", "%.03f", displacement);
         telemetry.update();
+    }
+
+    public void collectSkyStone(){
+        hookVrt.setPosition(0.7);
+        hookHrz.setPosition(1);
+        drive.driveDistance(0.5, displacement, 1000);
+
+        drive.setHookVrt(0.4, 500);
+        leftRoller.setPower(1);
+        rightRoller.setPower(1);
+        drive.setHookHrz(0, 500);
+        leftRoller.setPower(0);
+        rightRoller.setPower(0);
+        sleep(500);
+
+        drive.setBlockSweeper(true);
+        sleep(500);
+        drive.setBlockSweeper(false);
     }
 }
