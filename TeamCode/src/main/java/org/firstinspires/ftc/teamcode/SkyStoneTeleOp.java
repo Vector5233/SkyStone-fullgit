@@ -28,8 +28,8 @@ public class SkyStoneTeleOp extends OpMode {
 
     final String rotationNotIn = "RotationNotIn";
     final String rotationIn = "rotationIn";
-    final String rotationIning = "rotationIning";
-    final String rotationNotIning = "rotationNotIning";
+    final String rotationMovingIn = "rotationMovingIm";
+    final String rotationMovingOut = "rotationMovingOut";
     final String extenderIn = "extenderIn";
     final String extenderMovingOut = "extenderMovingOut";
     final String extenderMovingIn = "extenderMovingIn";
@@ -116,7 +116,7 @@ public class SkyStoneTeleOp extends OpMode {
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        deliveryGrabber.setPosition(0.35);
+        GrabberState = grabberClosing;
 
         deliveryRotation.setPosition(0);
 
@@ -166,14 +166,22 @@ public class SkyStoneTeleOp extends OpMode {
     }
 
     private void setLiftMotors() {
+        final double UPPOWER = 0.8;
+        final double DOWNPOWER = 0.3;
+        final double THRESHOLD = 0.5;
         // TODO consider carefully what actions could harm the lift and how to avoid doing those things
         //if(minLift <= leftLift.getCurrentPosition() &&leftLift.getCurrentPosition() <= maxLift) {
-        if (gamepad2.left_stick_y > 0.5) {
-            rightLift.setPower(gamepad2.left_stick_y * 0.1);
-            leftLift.setPower(gamepad2.left_stick_y * 0.1);
-        } else if (gamepad2.left_stick_y < -0.5) {
-            rightLift.setPower(gamepad2.left_stick_y * 0.8);
-            leftLift.setPower(gamepad2.left_stick_y * 0.8);
+        if (gamepad2.left_stick_y > THRESHOLD) {
+            if (GrabberState == grabberClose) {
+                rightLift.setPower(gamepad2.left_stick_y * DOWNPOWER);
+                leftLift.setPower(gamepad2.left_stick_y * DOWNPOWER);
+            }
+            else {
+                GrabberState = grabberClosing;
+            }
+        } else if (gamepad2.left_stick_y < -THRESHOLD) {
+            rightLift.setPower(gamepad2.left_stick_y * UPPOWER);
+            leftLift.setPower(gamepad2.left_stick_y * UPPOWER);
         } else {
             rightLift.setPower(0);
             leftLift.setPower(0);
@@ -284,12 +292,18 @@ public class SkyStoneTeleOp extends OpMode {
     public void setGrabber() {
         switch (GrabberState) {
             case grabberOpen:
-                deliveryGrabber.setPosition(0.35);
+                //deliveryGrabber.setPosition(0.35);
                 grabberTime.reset();
+                if (gamepad2.right_bumper) {
+                    GrabberState = grabberClosing;
+                }
                 break;
             case grabberClose:
-                deliveryGrabber.setPosition(0.435);
+                //deliveryGrabber.setPosition(0.435);
                 grabberTime.reset();
+                if (gamepad2.left_bumper) {
+                    GrabberState = grabberOpening;
+                }
                 break;
 
             case grabberOpening:
@@ -299,16 +313,13 @@ public class SkyStoneTeleOp extends OpMode {
                 }
                 break;
             case grabberClosing:
+            default:
                 deliveryGrabber.setPosition(0.435);
                 if (grabberTime.milliseconds() >= GRABBERTIMEOUT) {
                     GrabberState = grabberClose;
                 }
                 break;
-            case liftDown:
-                if (leftLift.getPower() == -1) {
-                    deliveryGrabber.setPosition(0.435);
-                }
-                break;
+
         }
 
     }
@@ -342,15 +353,49 @@ public class SkyStoneTeleOp extends OpMode {
         }
     }
 
-    public void deliveryRotationtest() {
-        if (gamepad2.y) {
-            RotationState = rotationNotIn;
+    /*public void setExtender() {
+        switch (ExtenderState) {
+            case extenderOut:
+                // There is no way to code the position of continuous servo...
+                extenderTime.reset();
+                if (gamepad2.right_stick_y >= 0.5 && EXTENDERIMEOUT >= maxTime) {
+                    if (rotationIn){
+                        ExtenderState = extenderMovingIn;
+                    }
+                    else {
+                        rotationState = rotationMovingIn;
+                    }
+
+                }
+
+                break;
+            case extenderIn:
+                extenderTime.reset();
+                if (gamepad2.right_stick_y <= -0.5 && EXTENDERIMEOUT >= maxTime) {
+                    if (rotationIn){
+                        ExtenderState = extenderMovingOut;
+                    }
+                    else {
+                        rotationState = rotationMovingIn;
+                    }
+
+                }
+
+                break;
+
+            case extenderMovingIn:
+                deliveryExtender.setPower(1);
+                if (extenderTime.milliseconds() >= EXTENDERIMEOUT) {
+                    ExtenderState = extenderIn;
+                }
+                break;
+            case extenderMovingOut:
+                deliveryExtender.setPower(-1);
+                if (extenderTime.milliseconds() >= EXTENDERIMEOUT) {
+                    ExtenderState = extenderOut;
+                }
+                break;
 
         }
-
-        switch (RotationState) {
-            case rotationNotIn:
-
-        }
-    }
+    }*/
 }
