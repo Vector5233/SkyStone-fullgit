@@ -68,7 +68,7 @@ public class SkyStoneTeleOp extends OpMode {
     String ExtenderState = null;
 
     ElapsedTime grabberTime = new ElapsedTime();
-    final int GRABBERTIMEOUT = 200;
+    final int GRABBERTIMEOUT = 150;
     ElapsedTime rotationTime = new ElapsedTime();
     final int ROTATIONTIMEOUT = 500;
     ElapsedTime extenderTime = new ElapsedTime();
