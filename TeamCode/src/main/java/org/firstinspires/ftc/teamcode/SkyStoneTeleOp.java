@@ -20,6 +20,8 @@ public class SkyStoneTeleOp extends OpMode {
     final double rollerPower = 1.0;
     final double maxExtenderTime = 300; // need to be fixed by using the timer
 
+    double driveSpeed = 1;
+
     //test required
     final int maxLift = 700;
     final int minLift = 0;
@@ -33,6 +35,7 @@ public class SkyStoneTeleOp extends OpMode {
     final String rotationMovingHalf = "rotationMovingHalf";
     final String rotationMovingIn = "rotationMovingIm";
     final String rotationMovingOut = "rotationMovingOut";
+
     final String extenderIn = "extenderIn";
     final String extenderMovingOut = "extenderMovingOut";
     final String extenderMovingIn = "extenderMovingIn";
@@ -62,6 +65,7 @@ public class SkyStoneTeleOp extends OpMode {
     boolean if_pressedRB = false;
     boolean if_pressedLB = false;
     
+    String DriveState = null;
     String GrabberState = null;
     String LiftGrabberState = null;
     String RotationState = null;
@@ -168,10 +172,31 @@ public class SkyStoneTeleOp extends OpMode {
     }
 
     private void setDriveMotors() {
-        frontRight.setPower(-gamepad1.right_stick_x - gamepad1.right_stick_y - gamepad1.left_stick_x);
-        frontLeft.setPower(gamepad1.right_stick_x - gamepad1.right_stick_y + gamepad1.left_stick_x);
-        backRight.setPower(gamepad1.right_stick_x - gamepad1.right_stick_y - gamepad1.left_stick_x);
-        backLeft.setPower(-gamepad1.right_stick_x - gamepad1.right_stick_y + gamepad1.left_stick_x);
+
+        if (gamepad2.dpad_down && driveSpeed > .1) {
+            if (!if_pressedDpadDown) {
+                driveSpeed -= .1;
+                if_pressedDpadDown = true;
+            }
+        }
+        else {
+            if_pressedDpadDown = false;
+        }
+
+        if (gamepad2.dpad_down && driveSpeed < 1) {
+            if (!if_pressedDpadDown) {
+                driveSpeed += .1;
+                if_pressedDpadDown = true;
+            }
+        }
+        else {
+            if_pressedDpadDown = false;
+        }
+
+        frontRight.setPower((-gamepad1.right_stick_x - gamepad1.right_stick_y - gamepad1.left_stick_x) * driveSpeed);
+        frontLeft.setPower((gamepad1.right_stick_x - gamepad1.right_stick_y + gamepad1.left_stick_x) * driveSpeed);
+        backRight.setPower((gamepad1.right_stick_x - gamepad1.right_stick_y - gamepad1.left_stick_x) * driveSpeed);
+        backLeft.setPower((-gamepad1.right_stick_x - gamepad1.right_stick_y + gamepad1.left_stick_x) * driveSpeed);
     }
 
     private void setRollerMotors() {
