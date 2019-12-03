@@ -126,11 +126,11 @@ public class SkyStoneTeleOp extends OpMode {
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        GrabberState = grabberOpen;
+        GrabberState = grabberClose;
         RotationState = rotationIn;
-        /*ExtenderState = extenderIn;
-        
-         */
+        ExtenderState = extenderIn;
+
+
 
 
 
@@ -143,7 +143,7 @@ public class SkyStoneTeleOp extends OpMode {
 
         leftFoundation.setPosition(0.1);
 
-        deliveryGrabber.setPosition(0.35);
+
         // set all states here
     }
 
@@ -191,7 +191,7 @@ public class SkyStoneTeleOp extends OpMode {
         final double THRESHOLD = 0.5;
         // TODO consider carefully what actions could harm the lift and how to avoid doing those things
         //if(minLift <= leftLift.getCurrentPosition() &&leftLift.getCurrentPosition() <= maxLift) {
-        if (gamepad2.left_stick_y < -THRESHOLD) {
+        if (gamepad2.left_stick_y > THRESHOLD) {
             // lifting down
             if (GrabberState == grabberClose) {
                 rightLift.setPower(gamepad2.left_stick_y * DOWNPOWER);
@@ -200,7 +200,7 @@ public class SkyStoneTeleOp extends OpMode {
             else {
                 GrabberState = grabberClosing;
             }
-        } else if (gamepad2.left_stick_y > THRESHOLD) {
+        } else if (gamepad2.left_stick_y < -THRESHOLD) {
             // lifting Up
             if (GrabberState == grabberClose) {
                 rightLift.setPower(gamepad2.left_stick_y * UPPOWER);
