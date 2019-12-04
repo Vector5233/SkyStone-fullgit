@@ -130,14 +130,15 @@ public class SkyStoneTeleOp extends OpMode {
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        GrabberState = grabberOpen;
+        GrabberState = grabberClose;
         RotationState = rotationIn;
-        /*ExtenderState = extenderIn;
-        
-         */
+        ExtenderState = extenderIn;
 
 
 
+
+
+        deliveryRotation.setPosition(0);
         RotationState = rotationMovingIn;
 
         ExtenderState = extenderIn;
@@ -218,20 +219,19 @@ public class SkyStoneTeleOp extends OpMode {
         final double THRESHOLD = 0.5;
         // TODO consider carefully what actions could harm the lift and how to avoid doing those things
         //if(minLift <= leftLift.getCurrentPosition() &&leftLift.getCurrentPosition() <= maxLift) {
-        if (gamepad2.left_stick_y < -THRESHOLD) {
+        if (gamepad2.left_stick_y > THRESHOLD) {
             // lifting down
 
             rightLift.setPower(gamepad2.left_stick_y * DOWNPOWER);
             leftLift.setPower(gamepad2.left_stick_y * DOWNPOWER);
 
         } else if (gamepad2.left_stick_y > THRESHOLD) {
+            rightLift.setPower(gamepad2.left_stick_y * DOWNPOWER);
+            leftLift.setPower(gamepad2.left_stick_y * DOWNPOWER);
+        } else if (gamepad2.left_stick_y < -THRESHOLD) {
             // lifting Up
             rightLift.setPower(gamepad2.left_stick_y * UPPOWER);
             leftLift.setPower(gamepad2.left_stick_y * UPPOWER);
-
-            // Since the grabber was automatically opened during either lifting up or down, I
-            // just wrote the code "GrabberState == grabberClose" in both lifting up and down
-
         } else {
             rightLift.setPower(0);
             leftLift.setPower(0);
