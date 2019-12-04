@@ -158,13 +158,13 @@ public class SkyStoneTeleOp extends OpMode {
         setRollerMotors();
         setLiftMotors();
         setDeliveryMotors();
-        setDeliveryGrabber();
         setFoundationGrabber();
         setHook();
         setBlockSweeper();
         setCapServo();
-        setDeliveryRotation();
-        setDeliveryExtender();
+        //setDeliveryGrabber();
+        //setDeliveryRotation();
+        //setDeliveryExtender();
         //setCameraServo();
         telemetry.addData("hookHrz", hookHrz.getPosition());
         telemetry.addData("hookVrt", hookVrt.getPosition());
@@ -243,7 +243,7 @@ public class SkyStoneTeleOp extends OpMode {
     private void setDeliveryMotors() {
         deliveryExtender.setPower(gamepad2.right_stick_y);
 
-        /*
+
         if (gamepad2.right_bumper == true) {
             deliveryGrabber.setPosition(.35);
         }
@@ -252,9 +252,8 @@ public class SkyStoneTeleOp extends OpMode {
             deliveryGrabber.setPosition(.435);
         }
 
-         */
 
-        /*if  (gamepad2.right_trigger >= 0.5 && ifUnpressedRT) {
+        if  (gamepad2.right_trigger >= 0.5 && ifUnpressedRT) {
             if(deliveryRotation.getPosition() < 0.25) {
                 deliveryRotation.setPosition(0.5);
                 telemetry.addData("Grabber", deliveryRotation.getPosition());
@@ -279,7 +278,7 @@ public class SkyStoneTeleOp extends OpMode {
             ifUnpressedLT = true;
         }
 
-         */
+
     }
 
 
@@ -381,14 +380,14 @@ public class SkyStoneTeleOp extends OpMode {
                 break;
 
             case grabberOpening:
-                deliveryGrabber.setPosition(0.35);
+                deliveryGrabber.setPosition(0);
                 if (grabberTime.milliseconds() >= GRABBERTIMEOUT) {
                     GrabberState = grabberOpen;
                 }
                 break;
             case grabberClosing:
             //default:
-                deliveryGrabber.setPosition(0.435);
+                deliveryGrabber.setPosition(0.6);
                 if (grabberTime.milliseconds() >= GRABBERTIMEOUT) {
                     GrabberState = grabberClose;
                 }
@@ -399,10 +398,10 @@ public class SkyStoneTeleOp extends OpMode {
     }
 
     /*public void setCameraServo () {
-        if (gamepad2.x){
+        if (gamepad2.y){
+            cameraServo.setPx){
             cameraServo.setPosition(0);
-        } else if (gamepad2.y){
-            cameraServo.setPosition(1);
+        } else if (gamepad2.osition(1);
         }
     }
 
@@ -563,6 +562,10 @@ public class SkyStoneTeleOp extends OpMode {
                 break;
         }
     }
+
+
+
+
 
 
 
