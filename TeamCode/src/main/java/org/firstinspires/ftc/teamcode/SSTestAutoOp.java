@@ -122,7 +122,13 @@ public class SSTestAutoOp extends LinearOpMode {
 
         drive.strafeDistance(1, -24.5, 1000);
         detectStones();
+        telemetry.addData("  SS left", "%.03f", SS_leftPixel);
+        telemetry.addData("  SS right", "%.03f", SS_rightPixel);
+        telemetry.update();
+        sleep(1000);
+
         getDisplacement();
+
         collectSkyStone();
 
         //drive till fnd
@@ -149,9 +155,9 @@ public class SSTestAutoOp extends LinearOpMode {
     }
 
     public void detectStones(){
-        if (opModeIsActive()) {
-            tfodTimeout = new ElapsedTime();
+        tfodTimeout = new ElapsedTime();
 
+        if (opModeIsActive()) {
             while (opModeIsActive()) {
                 if (tfod != null) {
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -208,20 +214,28 @@ public class SSTestAutoOp extends LinearOpMode {
         telemetry.addData("inch / pixel", "%.03f", inchPerPixel);
 
         //displacement = ((5/8)*(SS_rightPixel - SS_leftPixel) + SS_leftPixel - CENTER_PIXELS)*inchPerPixel - ARM_TO_WEBCAM;
-        if(250 <= SS_rightPixel && SS_rightPixel <= 500)
-            displacement = inchPerPixel*(SS_rightPixel - CENTER_PIXELS) - ARM_TO_WEBCAM + 13;
-        else if(600 <= SS_rightPixel && SS_rightPixel <= 800)
-            displacement = inchPerPixel*(SS_leftPixel - CENTER_PIXELS) - ARM_TO_WEBCAM + 5;
-        else if(isVirtual)
-            displacement = inchPerPixel*(CENTER_PIXELS + SS_rightPixel - 2*SS_leftPixel) - ARM_TO_WEBCAM + 15;
+        if(250 <= SS_rightPixel && SS_rightPixel <= 500) {
+            telemetry.addLine("right");
+            displacement = inchPerPixel * (SS_rightPixel - CENTER_PIXELS) - ARM_TO_WEBCAM + 13;
+        }
+        else if(600 <= SS_rightPixel && SS_rightPixel <= 800) {
+            telemetry.addLine("left");
+            displacement = inchPerPixel * (SS_leftPixel - CENTER_PIXELS) - ARM_TO_WEBCAM + 5;
+        }
+        else if(isVirtual) {
+            telemetry.addLine("center");
+            displacement = inchPerPixel * (CENTER_PIXELS + SS_rightPixel - 2 * SS_leftPixel) - ARM_TO_WEBCAM + 15;
+        }
 
         telemetry.addData("displacement", "%.03f", displacement);
         telemetry.update();
+        sleep(1000);
     }
 
     public void collectSkyStone(){
-        hookVrt.setPosition(0.7);
+        hookVrt.setPosition(0.6);
         hookHrz.setPosition(1);
+
         sleep(500);
         drive.driveDistance(0.5, displacement, 1000);
         sleep(200);
