@@ -193,25 +193,12 @@ public class SkyStoneTeleOp extends OpMode {
         //if(minLift <= leftLift.getCurrentPosition() &&leftLift.getCurrentPosition() <= maxLift) {
         if (gamepad2.left_stick_y > THRESHOLD) {
             // lifting down
-            if (GrabberState == grabberClose) {
-                rightLift.setPower(gamepad2.left_stick_y * DOWNPOWER);
-                leftLift.setPower(gamepad2.left_stick_y * DOWNPOWER);
-            }
-            else {
-                GrabberState = grabberClosing;
-            }
+            rightLift.setPower(gamepad2.left_stick_y * DOWNPOWER);
+            leftLift.setPower(gamepad2.left_stick_y * DOWNPOWER);
         } else if (gamepad2.left_stick_y < -THRESHOLD) {
             // lifting Up
-            if (GrabberState == grabberClose) {
-                rightLift.setPower(gamepad2.left_stick_y * UPPOWER);
-                leftLift.setPower(gamepad2.left_stick_y * UPPOWER);
-            }
-            else {
-                GrabberState = grabberClosing;
-                // Since the grabber was automatically opened during either lifting up or down, I
-                // just wrote the code "GrabberState == grabberClose" in both lifting up and down
-
-            }
+            rightLift.setPower(gamepad2.left_stick_y * UPPOWER);
+            leftLift.setPower(gamepad2.left_stick_y * UPPOWER);
         } else {
             rightLift.setPower(0);
             leftLift.setPower(0);
