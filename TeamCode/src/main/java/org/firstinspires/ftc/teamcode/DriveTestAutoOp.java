@@ -42,6 +42,8 @@ public class DriveTestAutoOp extends LinearOpMode {
 
         deliveryExtender = hardwareMap.crservo.get("deliveryExtender");
 
+        gyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("gyro");
+
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         //change frontLeft into reverse
@@ -61,18 +63,25 @@ public class DriveTestAutoOp extends LinearOpMode {
         rightRoller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftRoller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        drive = new SSDriveObject(frontLeft, frontRight, backLeft, backRight, hookHrz, hookVrt, deliveryGrabber, leftFoundation, deliveryExtender, rightRoller, leftRoller, camera, leftFoundation, blockSweeper, this);
+        drive = new SSDriveObject(frontLeft, frontRight, backLeft, backRight, hookHrz, hookVrt, deliveryGrabber, leftFoundation, deliveryExtender, rightRoller, leftRoller, camera, leftFoundation, blockSweeper, gyro, this);
     }
 
     public void runOpMode() {
         initialize();
         waitForStart();
 
-        drive.strafeDistance(1, 20, 5000);
+       /* drive.strafeDistance(1, 20, 5000);
         sleep(1000);
         drive.strafeDistance(1, -5, 5000);
         sleep(50);
-
+*/
+        drive.turnDegree(.5, 90);
+        sleep(5000);
+        telemetry.addData("frontLeft", frontLeft.getPower());
+        telemetry.addData("backLeft", backLeft.getPower());
+        telemetry.addData("frontRight", frontRight.getPower());
+        telemetry.addData("backRight", backRight.getPower());
+        telemetry.update();
         /*
         drive.driveDistance(1, 10, 5000);
         sleep(3000);
