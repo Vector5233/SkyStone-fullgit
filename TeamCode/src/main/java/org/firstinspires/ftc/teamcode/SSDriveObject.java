@@ -22,7 +22,7 @@ public class SSDriveObject extends Object{
     CRServo deliveryExtender;
     DcMotor frontRight, frontLeft, backRight, backLeft, rollerRight, rollerLeft;
     LinearOpMode opmode;
-     ModernRoboticsI2cGyro gyro;
+    ModernRoboticsI2cGyro gyro;
 
     final double TICKS_PER_INCH_STRAIGHT = (383.6*2) / (4 * 3.14159265358979323846264);
     final double TICKS_PER_INCH_STRAFE = ((383.6*2) / (4 * 3.14159265358979323846264))*1.15;
@@ -270,14 +270,32 @@ public class SSDriveObject extends Object{
         stopDriving();
     }
 
-    public void turnDegree(double power, double degrees) {
+    public void turnDegree(double power, double targetDegrees) {
+        final double TOLERANCE = 3;
+        if (Math.abs(targetDegrees - gyro.getIntegratedZValue()) < TOLERANCE) {
+            if (gyro.getIntegratedZValue() < targetDegrees) {
+                frontLeft.setPower(-power);
+                frontRight.setPower(power);
+                backLeft.setPower(-power);
+                backRight.setPower(power);
+            } else if (gyro.getIntegratedZValue() > targetDegrees) {
+                frontLeft.setPower(power);
+                frontRight.setPower(-power);
+                backLeft.setPower(power);
+                backRight.setPower(-power);
+            }
+        }
+    }
+
+
+    /*public void turnDegree(double power, double degrees) {
         // distance in inches
         //conjecture instead of moving 12", wheels will go 12"*cos(45)= 8.5"
         int ticks = (int) ((2 * 3.14159 / 360) * degrees * ROBOT_RADIUS * TICKS_PER_INCH_STRAIGHT);
 
-        /*if (power > MAXSPEED) {
+        if (power > MAXSPEED) {
             power = MAXSPEED;
-        }*/
+        }
 
         double target;
 
@@ -299,7 +317,7 @@ public class SSDriveObject extends Object{
         backLeft.setPower(power);
         backRight.setPower(power);
 
-        while ((/*frontRight.isBusy() ||*/ backLeft.isBusy()) && opmode.opModeIsActive()) {
+        while ((frontRight.isBusy() || backLeft.isBusy()) && opmode.opModeIsActive()) {
             opmode.telemetry.addData("frontLeft, current", frontLeft.getCurrentPosition());
             opmode.telemetry.addData("backLeft, current", backLeft.getCurrentPosition());
             opmode.telemetry.addData("frontRight, current", frontRight.getCurrentPosition());
@@ -321,7 +339,7 @@ public class SSDriveObject extends Object{
 
         opmode.telemetry.addData("Gyro end of turn", gyro.getIntegratedZValue());
         opmode.telemetry.update();
-    }
+    }*/
 
     public void turnDegree(double power, double degrees, int time) {
         turnTimeout = new ElapsedTime();

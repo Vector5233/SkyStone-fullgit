@@ -38,6 +38,8 @@ public class SudoAutoOp extends LinearOpMode {
 
         gyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("gyro");
 
+
+
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         //change frontLeft into reverse
@@ -58,6 +60,12 @@ public class SudoAutoOp extends LinearOpMode {
         leftRoller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         drive = new SSDriveObject(frontLeft, frontRight, backLeft, backRight, hookHrz, hookVrt, deliveryGrabber, leftFoundation, deliveryExtender, rightRoller, leftRoller, camera, leftFoundation, blockSweeper, gyro, this);
+
+        gyro.calibrate();
+        while (gyro.isCalibrating()) {
+            ;
+        }
+
     }
     public void runOpMode(){
         initialize();
