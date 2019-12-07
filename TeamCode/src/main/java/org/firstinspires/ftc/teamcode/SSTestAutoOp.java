@@ -123,7 +123,9 @@ public class SSTestAutoOp extends LinearOpMode {
         drive.strafeDistance(1, -24.5, 1000);
         detectStones();
         telemetry.addData("  SS left", "%.03f", SS_leftPixel);
-        telemetry.addData("  SS right", "%.03f", SS_rightPixel);
+        telemetry.addData(
+
+                "  SS right", "%.03f", SS_rightPixel);
         telemetry.update();
         sleep(1000);
 
