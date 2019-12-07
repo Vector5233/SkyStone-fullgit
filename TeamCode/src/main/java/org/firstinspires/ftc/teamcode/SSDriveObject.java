@@ -86,10 +86,10 @@ public class SSDriveObject extends Object{
     }
 
     public void telemetryDcMotor(){
-        opmode.telemetry.addData("FR", frontRight.getPower());
-        opmode.telemetry.addData("FB", frontLeft.getPower());
-        opmode.telemetry.addData("BR", backRight.getPower());
-        opmode.telemetry.addData("BL", backLeft.getPower());
+        opmode.telemetry.addData("FR", frontRight.getCurrentPosition());
+        opmode.telemetry.addData("FB", frontLeft.getCurrentPosition());
+        opmode.telemetry.addData("BR", backRight.getCurrentPosition());
+        opmode.telemetry.addData("BL", backLeft.getCurrentPosition());
         opmode.telemetry.update();
     }
 
@@ -125,7 +125,42 @@ public class SSDriveObject extends Object{
         stopDriving();
     } */
 
-    public void driveDistance(double powerLimit, double distance) {
+    public void setPowerAll(double power) {
+        frontLeft.setPower(power);
+        frontRight.setPower(power);
+        backRight.setPower(power);
+        backLeft.setPower(power);
+    }
+
+    public void driveDistance(double powerlimit, double distance) {
+        final double POWERMIN = 0.22;
+        int ticks = (int) (distance * TICKS_PER_INCH_STRAIGHT);
+
+        setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setModeAll(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        while(frontLeft.getCurrentPosition() <= ticks) {
+            if (frontLeft.getCurrentPosition() < 0.1*ticks) {
+                setPowerAll(Math.max(10 * powerlimit * frontLeft.getCurrentPosition() / ticks, POWERMIN));
+                opmode.telemetry.addLine("accelerating");
+                telemetryDcMotor();
+            }
+            else if (frontLeft.getCurrentPosition() < 0.9*ticks) {
+                setPowerAll(powerlimit);
+                opmode.telemetry.addLine("cruising");
+                telemetryDcMotor();
+            }
+            else {
+                setPowerAll(Math.max(- 10 * powerlimit * (frontLeft.getCurrentPosition()- ticks) / ticks, POWERMIN));
+                opmode.telemetry.addLine("decelerating");
+                telemetryDcMotor();
+            }
+
+        }
+        stopDriving();
+
+    }
+    /*public void driveDistance(double powerLimit, double distance) {
 
         int ticks = (int) (distance * TICKS_PER_INCH_STRAIGHT);
 
@@ -134,7 +169,7 @@ public class SSDriveObject extends Object{
         final double ACCELDISTANCEPERCENT = .1;
 
         final double POWERINCREMENT = (powerLimit - POWERMIN) / NUMBEROFINTERVALS;
-        final double ACCELINCREMENT = ACCELDISTANCEPERCENT * ticks / NUMBEROFINTERVALS;
+        final double ACCELINCREMENT =  ticks / NUMBEROFINTERVALS;
 
         double accelIndex = ACCELINCREMENT;
         double power = POWERMIN;
@@ -149,7 +184,10 @@ public class SSDriveObject extends Object{
             if (frontLeft.getCurrentPosition() >= accelIndex * ACCELDISTANCEPERCENT * ticks) {
                 power += POWERINCREMENT;
                 accelIndex += ACCELINCREMENT;
+
             }
+            telemetryDcMotor();
+
         }
 
         while (frontLeft.getCurrentPosition() < ticks - ticks * ACCELDISTANCEPERCENT) {
@@ -157,6 +195,7 @@ public class SSDriveObject extends Object{
             frontRight.setPower(power);
             backLeft.setPower(power);
             backRight.setPower(power);
+            telemetryDcMotor();
         }
 
         accelIndex = (ticks - ticks * ACCELDISTANCEPERCENT) + ACCELINCREMENT;
@@ -171,10 +210,11 @@ public class SSDriveObject extends Object{
                 power -= POWERINCREMENT;
                 accelIndex -= ACCELINCREMENT;
             }
+            telemetryDcMotor();
         }
         stopDriving();
     }
-
+*/
 
 
     public void driveDistance(double power, double distance, int time) {
