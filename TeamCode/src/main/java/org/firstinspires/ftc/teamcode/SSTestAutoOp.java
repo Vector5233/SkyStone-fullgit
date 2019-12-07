@@ -108,8 +108,8 @@ public class SSTestAutoOp extends LinearOpMode {
 
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
-        drive.setHookHrz(0.5, 500);
-        drive.setHookVrt(0.4, 500);
+        drive.setHookHrz(0.5);
+        drive.setHookVrt(0.4);
 
         initTfod();
 
@@ -243,10 +243,10 @@ public class SSTestAutoOp extends LinearOpMode {
         drive.driveDistance(0.5, displacement, 1000);
         sleep(200);
 
-        drive.setHookVrt(0.4, 500);
+        drive.setHookVrt(0.4);
         leftRoller.setPower(1);
         rightRoller.setPower(1);
-        drive.setHookHrz(0, 500);
+        drive.setHookHrz(0);
         leftRoller.setPower(0);
         rightRoller.setPower(0);
         sleep(500);

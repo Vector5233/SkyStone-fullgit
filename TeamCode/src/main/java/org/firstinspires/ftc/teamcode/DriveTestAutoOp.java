@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -84,12 +85,14 @@ public class DriveTestAutoOp extends LinearOpMode {
 
         //drive.driveDistance(1, 40);
         //drive.strafeDistance(.67, 30);
+
+
         drive.turnDegree(.67, 90);
         sleep(3000);
         //drive.driveDistance(0.5, -40);
         //drive.strafeDistance(.67, -30);
         drive.turnDegree(.67, -90);
-        sleep(300 );
+        sleep(3000);
         telemetry.addLine("done");
 
     }

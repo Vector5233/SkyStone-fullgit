@@ -70,10 +70,22 @@ public class DriveTest2 extends LinearOpMode {
         initialize();
         waitForStart();
 
-        drive.strafeDistance(0.5, 40, 5000);
-        sleep(1000);
-        drive.strafeDistance(0.5, -40, 5000);
-        sleep(50);
+        drive.setHookHrz(1);
+        sleep(200);
+        drive.setHookVrt(0.4);
+        sleep(250);
+        drive.driveDistance(1, -5);
+        sleep(200);
+        drive.setHookHrz(0);
+        drive.setRollerMoters(true, 1, 1000);
+        //how to check if the block is collected or not (next round)
+        drive.setBlockSweeper(true);
+        sleep(750);
+        drive.setBlockSweeper(false);
+
+
+
+
 
         /*
         drive.driveDistance(1, 10, 5000);

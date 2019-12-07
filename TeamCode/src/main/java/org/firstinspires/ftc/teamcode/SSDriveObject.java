@@ -9,6 +9,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
 /* TODO
    To prevent robot from lumping at the endpoint
    1) make function that makes the robot smoothly accelerating stars and stops
@@ -37,6 +44,12 @@ public class SSDriveObject extends Object{
     private ElapsedTime hookVrtTimeout;
     private ElapsedTime DG_Timeout;
     private ElapsedTime DE_Timeout;
+    private BNO055IMU imu = null;
+
+    BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+    //The REV Expansion hub is mounted vertically, so we have to flip the y and z axes.
+
 
     //final double TOLERANCE = ??;
     //final double ROOT2 = 1.414;
@@ -68,6 +81,33 @@ public class SSDriveObject extends Object{
         //add delivery servos
         opmode = parent;
         gyro = G;
+        imu = opmode.hardwareMap.get(BNO055IMU.class, "imu");
+
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        imu.initialize(parameters);
+
+        byte AXIS_MAP_CONFIG_BYTE = 0x18;
+        byte AXIS_MAP_SIGN_BYTE = 0x1;
+
+        imu.write8(BNO055IMU.Register.OPR_MODE,BNO055IMU.SensorMode.CONFIG.bVal & 0x0F);
+        try {
+            Thread.sleep(100);
+        }catch(InterruptedException e)
+        {
+            Thread.currentThread().interrupt();
+        }
+        imu.write8(BNO055IMU.Register.AXIS_MAP_CONFIG,AXIS_MAP_CONFIG_BYTE & 0x0F);
+        imu.write8(BNO055IMU.Register.AXIS_MAP_SIGN,AXIS_MAP_SIGN_BYTE & 0x0F);
+        imu.write8(BNO055IMU.Register.OPR_MODE,BNO055IMU.SensorMode.IMU.bVal & 0x0F);
+        try {
+            Thread.sleep(100);
+        }catch(InterruptedException e)
+        {
+            Thread.currentThread().interrupt();
+        }
     }
 
 
@@ -408,7 +448,51 @@ public class SSDriveObject extends Object{
         }
     }
 
-    public void turnToDegree(double powerLimit, double targetDegrees) {
+    public void turn(float angle, boolean CCW, double power) {
+        double currentAngle = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle;
+        double targetAngle;
+
+        if (CCW)
+        {
+            targetAngle = currentAngle - angle;
+
+            while (opmode.opModeIsActive() && currentAngle > targetAngle)
+            {
+                frontRight.setPower(power);
+                frontLeft.setPower(-power);
+                backRight.setPower(power);
+                backLeft.setPower(-power);
+
+                opmode.telemetry.addData("second Angle: ", imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle);
+
+                opmode.telemetry.update();
+
+                currentAngle = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle;
+            }
+        }
+        else
+        {
+            targetAngle = currentAngle + angle;
+
+            while (opmode.opModeIsActive() && currentAngle < targetAngle)
+            {
+                frontRight.setPower(-power);
+                frontLeft.setPower(power);
+                backRight.setPower(-power);
+                backLeft.setPower(power);
+
+                opmode.telemetry.addData("second Angle: ", imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle);
+
+                opmode.telemetry.update();
+
+                currentAngle = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle;
+            }
+        }
+
+        stopDriving();
+    }
+
+ /*   public void turnToDegree(double powerLimit, double targetDegrees) {
         final double FINALTOLERANCE = 2;
         //this reads the initial theta value for the gyro to be used later
         final double GYROINITIAL = gyro.getIntegratedZValue();
@@ -462,7 +546,7 @@ public class SSDriveObject extends Object{
                 backRight.setPower(-power);
             }
         }*/
-    }
+
 
     public void setTurnPower(double power) {
         frontLeft.setPower(power);
@@ -480,7 +564,7 @@ public class SSDriveObject extends Object{
         }*/
         final double PERCENT = .1;
         double powerMin = 0.22;
-        int ticks = (int) ((3.14159 / 180) * degrees * ROBOT_RADIUS * TICKS_PER_INCH_STRAIGHT);
+        int ticks = (int) ((3.14159 / 180) * degrees * ROBOT_RADIUS * TICKS_PER_INCH_STRAIGHT * 90/80);
 
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -672,7 +756,8 @@ public class SSDriveObject extends Object{
                 break;
         }
     }
-    public void setHookHrz (double position, int time) {
+
+    /*public void setHookHrz (double position, int time) {
         hookHrzTimeout = new ElapsedTime();
         final int HOOKHRZ_TIMEOUT = time;
 
@@ -697,6 +782,20 @@ public class SSDriveObject extends Object{
                 break;
             }
         }
+    }
+     */
+
+    public void setHookHrz (double position) {
+
+        hookHrz.setPosition(position);
+
+    }
+
+
+    public void setHookVrt (double position) {
+
+        hookVrt.setPosition(position);
+
     }
 
     public void setCameraServo (double position) {
