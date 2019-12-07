@@ -22,7 +22,7 @@ public class SSDriveObject extends Object{
     CRServo deliveryExtender;
     DcMotor frontRight, frontLeft, backRight, backLeft, rollerRight, rollerLeft;
     LinearOpMode opmode;
-     ModernRoboticsI2cGyro gyro;
+    ModernRoboticsI2cGyro gyro;
 
     final double TICKS_PER_INCH_STRAIGHT = (383.6*2) / (4 * 3.14159265358979323846264);
     final double TICKS_PER_INCH_STRAFE = ((383.6*2) / (4 * 3.14159265358979323846264))*1.15;
@@ -48,7 +48,8 @@ public class SSDriveObject extends Object{
     //double convertion = 0;
 
 
-    public SSDriveObject(DcMotor FL, DcMotor FR, DcMotor BL, DcMotor BR, Servo HHRZ, Servo HVRT, Servo DG, Servo DR, CRServo DE, DcMotor RR, DcMotor RL, Servo RF, Servo LF, Servo BS, LinearOpMode parent){
+
+    public SSDriveObject(DcMotor FL, DcMotor FR, DcMotor BL, DcMotor BR, Servo HHRZ, Servo HVRT, Servo DG, Servo DR, CRServo DE, DcMotor RR, DcMotor RL, Servo RF, Servo LF, Servo BS, ModernRoboticsI2cGyro G, LinearOpMode parent){
         frontLeft = FL;
         frontRight = FR;
         backLeft = BL;
@@ -66,6 +67,7 @@ public class SSDriveObject extends Object{
         blockSweeper = BS;
         //add delivery servos
         opmode = parent;
+        gyro = G;
     }
 
 
@@ -84,19 +86,19 @@ public class SSDriveObject extends Object{
     }
 
     public void telemetryDcMotor(){
-        opmode.telemetry.addData("FR", frontRight.getPower());
-        opmode.telemetry.addData("FB", frontLeft.getPower());
-        opmode.telemetry.addData("BR", backRight.getPower());
-        opmode.telemetry.addData("BL", backLeft.getPower());
+        opmode.telemetry.addData("FR", frontRight.getCurrentPosition());
+        opmode.telemetry.addData("FB", frontLeft.getCurrentPosition());
+        opmode.telemetry.addData("BR", backRight.getCurrentPosition());
+        opmode.telemetry.addData("BL", backLeft.getCurrentPosition());
         opmode.telemetry.update();
     }
 
-    public void driveDistance(double power, double distance) {
+    /*public void driveDistance(double power, double distance) {
         int ticks = (int) (distance * TICKS_PER_INCH_STRAIGHT);
 
-        /*if (power > MAXSPEED) {
+        if (power > MAXSPEED) {
             power = MAXSPEED;
-        }*/
+        }
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -121,16 +123,108 @@ public class SSDriveObject extends Object{
         };
 
         stopDriving();
+    } */
+
+    public void setPowerAll(double power) {
+        frontLeft.setPower(power);
+        frontRight.setPower(power);
+        backRight.setPower(power);
+        backLeft.setPower(power);
     }
+
+    public void driveDistance(double powerlimit, double distance) {
+        final double POWERMIN = 0.22;
+        int ticks = (int) (distance * TICKS_PER_INCH_STRAIGHT);
+
+        setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setModeAll(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        while(frontLeft.getCurrentPosition() <= ticks) {
+            if (frontLeft.getCurrentPosition() < 0.1*ticks) {
+                setPowerAll(Math.max(10 * powerlimit * frontLeft.getCurrentPosition() / ticks, POWERMIN));
+                opmode.telemetry.addLine("accelerating");
+                telemetryDcMotor();
+            }
+            else if (frontLeft.getCurrentPosition() < 0.9*ticks) {
+                setPowerAll(powerlimit);
+                opmode.telemetry.addLine("cruising");
+                telemetryDcMotor();
+            }
+            else {
+                setPowerAll(Math.max(- 10 * powerlimit * (frontLeft.getCurrentPosition()- ticks) / ticks, POWERMIN));
+                opmode.telemetry.addLine("decelerating");
+                telemetryDcMotor();
+            }
+
+        }
+        stopDriving();
+
+    }
+    /*public void driveDistance(double powerLimit, double distance) {
+
+        int ticks = (int) (distance * TICKS_PER_INCH_STRAIGHT);
+
+        final double POWERMIN = 0.22;
+        final int NUMBEROFINTERVALS = 20;
+        final double ACCELDISTANCEPERCENT = .1;
+
+        final double POWERINCREMENT = (powerLimit - POWERMIN) / NUMBEROFINTERVALS;
+        final double ACCELINCREMENT =  ticks / NUMBEROFINTERVALS;
+
+        double accelIndex = ACCELINCREMENT;
+        double power = POWERMIN;
+
+        //this loop accelerates the robot up to powerLimit given over a chosen proportion of the distance given
+        while (accelIndex < ACCELDISTANCEPERCENT * ticks){
+            frontLeft.setPower(power);
+            frontRight.setPower(power);
+            backLeft.setPower(power);
+            backRight.setPower(power);
+
+            if (frontLeft.getCurrentPosition() >= accelIndex * ACCELDISTANCEPERCENT * ticks) {
+                power += POWERINCREMENT;
+                accelIndex += ACCELINCREMENT;
+
+            }
+            telemetryDcMotor();
+
+        }
+
+        while (frontLeft.getCurrentPosition() < ticks - ticks * ACCELDISTANCEPERCENT) {
+            frontLeft.setPower(power);
+            frontRight.setPower(power);
+            backLeft.setPower(power);
+            backRight.setPower(power);
+            telemetryDcMotor();
+        }
+
+        accelIndex = (ticks - ticks * ACCELDISTANCEPERCENT) + ACCELINCREMENT;
+
+        while ((accelIndex < ticks)){
+            frontLeft.setPower(power);
+            frontRight.setPower(power);
+            backLeft.setPower(power);
+            backRight.setPower(power);
+
+            if (frontLeft.getCurrentPosition() >= accelIndex * ticks) {
+                power -= POWERINCREMENT;
+                accelIndex -= ACCELINCREMENT;
+            }
+            telemetryDcMotor();
+        }
+        stopDriving();
+    }
+*/
+
 
     public void driveDistance(double power, double distance, int time) {
         driveTimeout = new ElapsedTime();
         int DRIVE_TIMEOUT = time;
         int ticks = (int) (distance * TICKS_PER_INCH_STRAIGHT);
 
-        /*if (power > MAXSPEED) {
+        if (power > MAXSPEED) {
             power = MAXSPEED;
-        }*/
+        }
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -216,14 +310,32 @@ public class SSDriveObject extends Object{
         stopDriving();
     }
 
-    public void turnDegree(double power, double degrees) {
+    public void turnDegree(double power, double targetDegrees) {
+        final double TOLERANCE = 3;
+        if (Math.abs(targetDegrees - gyro.getIntegratedZValue()) < TOLERANCE) {
+            if (gyro.getIntegratedZValue() < targetDegrees) {
+                frontLeft.setPower(-power);
+                frontRight.setPower(power);
+                backLeft.setPower(-power);
+                backRight.setPower(power);
+            } else if (gyro.getIntegratedZValue() > targetDegrees) {
+                frontLeft.setPower(power);
+                frontRight.setPower(-power);
+                backLeft.setPower(power);
+                backRight.setPower(-power);
+            }
+        }
+    }
+
+
+    /*public void turnDegree(double power, double degrees) {
         // distance in inches
         //conjecture instead of moving 12", wheels will go 12"*cos(45)= 8.5"
         int ticks = (int) ((2 * 3.14159 / 360) * degrees * ROBOT_RADIUS * TICKS_PER_INCH_STRAIGHT);
 
-        /*if (power > MAXSPEED) {
+        if (power > MAXSPEED) {
             power = MAXSPEED;
-        }*/
+        }
 
         double target;
 
@@ -245,15 +357,29 @@ public class SSDriveObject extends Object{
         backLeft.setPower(power);
         backRight.setPower(power);
 
-        while ((frontRight.isBusy() || frontLeft.isBusy()) && opmode.opModeIsActive()) ;
+        while ((frontRight.isBusy() || backLeft.isBusy()) && opmode.opModeIsActive()) {
+            opmode.telemetry.addData("frontLeft, current", frontLeft.getCurrentPosition());
+            opmode.telemetry.addData("backLeft, current", backLeft.getCurrentPosition());
+            opmode.telemetry.addData("frontRight, current", frontRight.getCurrentPosition());
+            opmode.telemetry.addData("backRight, current", backRight.getCurrentPosition());
+            opmode.telemetry.addData("frontLeft, target", frontLeft.getTargetPosition());
+            opmode.telemetry.addData("backLeft, target", backLeft.getTargetPosition());
+            opmode.telemetry.addData("frontRight, target", frontRight.getTargetPosition());
+            opmode.telemetry.addData("backRight, target", backRight.getTargetPosition());
+            opmode.telemetry.update();
+        }
 
-        telemetryDcMotor();
+        //telemetryDcMotor();
 
         stopDriving();
+        opmode.telemetry.addData("frontLeft", frontLeft.getPower());
+        opmode.telemetry.addData("backLeft", backLeft.getPower());
+        opmode.telemetry.addData("frontRight", frontRight.getPower());
+        opmode.telemetry.addData("backRight", backRight.getPower());
 
         opmode.telemetry.addData("Gyro end of turn", gyro.getIntegratedZValue());
         opmode.telemetry.update();
-    }
+    }*/
 
     public void turnDegree(double power, double degrees, int time) {
         turnTimeout = new ElapsedTime();

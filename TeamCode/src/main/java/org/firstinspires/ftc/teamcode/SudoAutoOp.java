@@ -36,6 +36,10 @@ public class SudoAutoOp extends LinearOpMode {
 
         deliveryExtender = hardwareMap.crservo.get("deliveryExtender");
 
+        gyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("gyro");
+
+
+
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         //change frontLeft into reverse
@@ -55,18 +59,25 @@ public class SudoAutoOp extends LinearOpMode {
         rightRoller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftRoller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        drive = new SSDriveObject(frontLeft, frontRight, backLeft, backRight, hookHrz, hookVrt, deliveryGrabber, leftFoundation, deliveryExtender, rightRoller, leftRoller, camera, leftFoundation, blockSweeper, this);
+        drive = new SSDriveObject(frontLeft, frontRight, backLeft, backRight, hookHrz, hookVrt, deliveryGrabber, leftFoundation, deliveryExtender, rightRoller, leftRoller, camera, leftFoundation, blockSweeper, gyro, this);
+
+        gyro.calibrate();
+        while (gyro.isCalibrating()) {
+            ;
+        }
+
     }
     public void runOpMode(){
         initialize();
         waitForStart();
 
+        drive.strafeDistance(1,-5, 500);
         drive.driveDistance(1, 100, 5000);
         sleep(50);
         drive.turnDegree(1, -90);
         drive.turnCorrect(-90);
         sleep(50);
-        drive.strafeDistance(1, -27, 1000);
+        drive.strafeDistance(1, -22, 1000);
         drive.setFoundationLeft(true);
         sleep(100);
         drive.strafeDistance(1, 27, 1000);
