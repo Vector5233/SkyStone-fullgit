@@ -64,6 +64,12 @@ public class DriveTestAutoOp extends LinearOpMode {
         leftRoller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         drive = new SSDriveObject(frontLeft, frontRight, backLeft, backRight, hookHrz, hookVrt, deliveryGrabber, leftFoundation, deliveryExtender, rightRoller, leftRoller, camera, leftFoundation, blockSweeper, gyro, this);
+
+        gyro.calibrate();
+
+        while ((gyro.getIntegratedZValue() != 0) && opmode.opModeIsActive()) {
+            continue;
+        }
     }
 
     public void runOpMode() {
@@ -76,9 +82,13 @@ public class DriveTestAutoOp extends LinearOpMode {
         sleep(50);
 */
 
-        drive.driveDistance(1, 20);
+        //drive.driveDistance(1, 40);
+        //drive.strafeDistance(.67, 30);
+        drive.turnToDegree(.67, 90);
         sleep(3000);
-        drive.driveDistance(0.5, -20);
+        //drive.driveDistance(0.5, -40);
+        //drive.strafeDistance(.67, -30);
+        drive.turnToDegree(.67, 0);
         sleep(300 );
         telemetry.addLine("done");
 
