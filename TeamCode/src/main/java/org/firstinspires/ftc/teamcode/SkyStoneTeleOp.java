@@ -64,6 +64,7 @@ public class SkyStoneTeleOp extends OpMode {
     boolean if_pressedGp1Y = false;
     boolean if_pressedGp2A = false;
     boolean if_pressedGp1B = false;
+    boolean if_pressedGp2B = false;
 
     boolean if_pressedRB = false;
     boolean if_pressedLB = false;
@@ -157,6 +158,8 @@ public class SkyStoneTeleOp extends OpMode {
 
         deliveryGrabber.setPosition(0);
 
+        capServo.setPosition(0);
+
         gyro.calibrate();
 
         while (gyro.getIntegratedZValue() != 0) {
@@ -174,7 +177,8 @@ public class SkyStoneTeleOp extends OpMode {
         setFoundationGrabber();
         setHook();
         setBlockSweeper();
-        setCapServo();
+        setCapServoTest();
+        //setCapServo();
         //setDeliveryGrabber();
         setDeliveryRotation();
         setDeliveryExtender();
@@ -356,13 +360,34 @@ public class SkyStoneTeleOp extends OpMode {
         }
     }
 
-    public void setCapServo() {
+    public void setCapServoTest() {
+        if (gamepad2.b && !if_pressedGp2B) {
+            if (capServo.getPosition() <= 0.1) {
+                capServo.setPosition(0.8);
+                if_pressedGp2B = true;
+            }
+
+            else if (capServo.getPosition() <= 0.9 && capServo.getPosition() >= 0.7){
+                capServo.setPosition(0);
+                if_pressedGp2B = true;
+            }
+        }
+        else {
+            if (!gamepad2.b) {
+                if_pressedGp2B = false;
+            }
+        }
+    }
+
+   /* public void setCapServo() {
         if (gamepad2.a) {
             capServo.setPosition(0);
         } else {
             capServo.setPosition(.8);
         }
     }
+
+    */
 
     /*public void setDeliveryGrabber() {
         telemetry.addData("grabber state", GrabberState);

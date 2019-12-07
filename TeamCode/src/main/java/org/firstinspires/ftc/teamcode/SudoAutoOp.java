@@ -71,19 +71,19 @@ public class SudoAutoOp extends LinearOpMode {
         initialize();
         waitForStart();
 
-        drive.strafeDistance(1,-5, 500);
-        drive.driveDistance(1, 100, 5000);
-        sleep(50);
+        drive.strafeDistance(1,-5);
+        sleep(500);
+        drive.driveDistance(1, 100);
+        sleep(500);
         drive.turnToDegree(1, -90);
 
-        sleep(50);
-        //drive.strafeDistance(1, -22, 1000);
-        drive.driveDistance(1,-22);
+        sleep(500);
+        drive.driveDistance(1,-23);
         drive.setFoundationLeft(true);
-        sleep(100);
-        drive.driveDistance(1, 27, 1000);
+        sleep(500);
+        drive.driveDistance(1, 26);
         drive.setFoundationLeft(false);
-        sleep(100);
-        drive.strafeDistance(1, 53, 1000);
+        sleep(500);
+        drive.strafeDistance(1, 100);
     }
 }
