@@ -20,7 +20,7 @@ public class SkyStoneTeleOp extends OpMode {
     ModernRoboticsI2cGyro gyro;
 
     final double rollerPower = 1.0;
-    final double MAXEXTENDERTIME = 300; // need to be fixed by using the timer
+
     final double TRIGGERTHRESHOLD = 0.5;
 
     double driveSpeed = 1;
@@ -176,8 +176,8 @@ public class SkyStoneTeleOp extends OpMode {
         setBlockSweeper();
         setCapServo();
         //setDeliveryGrabber();
-        //setDeliveryRotation();
-        //setDeliveryExtender();
+        setDeliveryRotation();
+        setDeliveryExtender();
         setCameraServo();
 
         telemetry.addData("blockSweeper", blockSweeper.getPosition());
@@ -260,7 +260,7 @@ public class SkyStoneTeleOp extends OpMode {
     private void setDeliveryMotors() {
         final double ROTATIONIN = 0.5;
         final double ROTATIONOUT = 1;
-        deliveryExtender.setPower(gamepad2.right_stick_y);
+        //deliveryExtender.setPower(gamepad2.right_stick_y);
 
 
         if (gamepad2.right_bumper == true) {
@@ -272,7 +272,7 @@ public class SkyStoneTeleOp extends OpMode {
         }
 
 
-        if  (gamepad2.right_trigger >= TRIGGERTHRESHOLD && ifUnpressedRT) {
+        /*if  (gamepad2.right_trigger >= TRIGGERTHRESHOLD && ifUnpressedRT) {
             if(deliveryRotation.getPosition() < 0.25) {
                 deliveryRotation.setPosition(ROTATIONIN);
                 telemetry.addData("Grabber", deliveryRotation.getPosition());
@@ -295,7 +295,7 @@ public class SkyStoneTeleOp extends OpMode {
             }
         } else {
             ifUnpressedLT = true;
-        }
+        }*/
 
 
     }
@@ -441,12 +441,12 @@ public class SkyStoneTeleOp extends OpMode {
         }
     }*/
 
-    /*public void setDeliveryExtender() {
+    public void setDeliveryExtender() {
         switch (ExtenderState) {
             case extenderOut:
                 // There is no way to code the position of continuous servo...
                 extenderTime.reset();
-                if (gamepad2.right_stick_y <= -0.5 && EXTENDERTIMEOUT >= MAXEXTENDERTIME) {
+                if (gamepad2.right_stick_y <= -0.5 && extenderTime.milliseconds() >= EXTENDERTIMEOUT) {
                     if (RotationState == rotationIn){
                         ExtenderState = extenderMovingIn;
                     }
@@ -459,7 +459,7 @@ public class SkyStoneTeleOp extends OpMode {
                 break;
             case extenderIn:
                 extenderTime.reset();
-                if (gamepad2.right_stick_y >= 0.5 && EXTENDERTIMEOUT >= MAXEXTENDERTIME) {
+                if (gamepad2.right_stick_y >= 0.5 && extenderTime.milliseconds() >= EXTENDERTIMEOUT) {
                     if (RotationState == rotationIn){
                         ExtenderState = extenderMovingOut;
                     }
@@ -576,7 +576,7 @@ public class SkyStoneTeleOp extends OpMode {
                 }
                 break;
         }
-    }*/
+    }
 }
 
 
