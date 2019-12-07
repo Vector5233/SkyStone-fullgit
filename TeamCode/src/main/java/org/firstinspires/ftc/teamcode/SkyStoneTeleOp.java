@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 import android.app.Notification;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -16,6 +17,7 @@ public class SkyStoneTeleOp extends OpMode {
     DcMotor frontRight, frontLeft, backRight, backLeft, rightRoller, leftRoller, rightLift, leftLift;
     Servo hookHrz, hookVrt, deliveryGrabber, deliveryRotation, leftFoundation, blockSweeper, capServo, cameraServo; //, rightFoundation;
     CRServo deliveryExtender;
+    ModernRoboticsI2cGyro gyro;
 
     final double rollerPower = 1.0;
     final double MAXEXTENDERTIME = 300; // need to be fixed by using the timer
@@ -131,6 +133,8 @@ public class SkyStoneTeleOp extends OpMode {
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        gyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("gyro");
+
         GrabberState = grabberClose;
         RotationState = rotationIn;
         ExtenderState = extenderIn;
@@ -152,6 +156,13 @@ public class SkyStoneTeleOp extends OpMode {
         leftFoundation.setPosition(0.1);
 
         deliveryGrabber.setPosition(0);
+
+        gyro.calibrate();
+
+        while (gyro.getIntegratedZValue() != 0) {
+            continue;
+        }
+
         // set all states here
     }
 
@@ -168,10 +179,10 @@ public class SkyStoneTeleOp extends OpMode {
         //setDeliveryRotation();
         //setDeliveryExtender();
         setCameraServo();
-        telemetry.addData("hookHrz", hookHrz.getPosition());
-        telemetry.addData("hookVrt", hookVrt.getPosition());
+
         telemetry.addData("blockSweeper", blockSweeper.getPosition());
         telemetry.addData("driveSpeed", driveSpeed);
+        telemetry.addData("gyro", gyro.getIntegratedZValue());
     }
 
     private void setDriveMotors() {
