@@ -84,11 +84,11 @@ public class DriveTestAutoOp extends LinearOpMode {
 
         //drive.driveDistance(1, 40);
         //drive.strafeDistance(.67, 30);
-        drive.turnToDegree(.67, 90);
+        drive.turnDegree(.67, 90);
         sleep(3000);
         //drive.driveDistance(0.5, -40);
         //drive.strafeDistance(.67, -30);
-        drive.turnToDegree(.67, 0);
+        drive.turnDegree(.67, -90);
         sleep(300 );
         telemetry.addLine("done");
 
