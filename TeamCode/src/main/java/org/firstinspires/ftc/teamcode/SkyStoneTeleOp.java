@@ -264,7 +264,7 @@ public class SkyStoneTeleOp extends OpMode {
     private void setDeliveryMotors() {
         final double ROTATIONIN = 0.5;
         final double ROTATIONOUT = 1;
-        //deliveryExtender.setPower(gamepad2.right_stick_y);
+        deliveryExtender.setPower(gamepad2.right_stick_y);
 
 
         if (gamepad2.right_bumper == true) {
@@ -276,7 +276,7 @@ public class SkyStoneTeleOp extends OpMode {
         }
 
 
-        /*if  (gamepad2.right_trigger >= TRIGGERTHRESHOLD && ifUnpressedRT) {
+        if  (gamepad2.right_trigger >= TRIGGERTHRESHOLD && ifUnpressedRT) {
             if(deliveryRotation.getPosition() < 0.25) {
                 deliveryRotation.setPosition(ROTATIONIN);
                 telemetry.addData("Grabber", deliveryRotation.getPosition());
@@ -299,7 +299,7 @@ public class SkyStoneTeleOp extends OpMode {
             }
         } else {
             ifUnpressedLT = true;
-        }*/
+        }
 
 
     }
