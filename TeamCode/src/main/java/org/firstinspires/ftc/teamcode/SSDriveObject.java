@@ -431,10 +431,10 @@ public class SSDriveObject extends Object{
     }
 
     public void setTurnPowerAll(double power) {
-        frontLeft.setPower(-power);
-        frontRight.setPower(power);
-        backLeft.setPower(-power);
-        backRight.setPower(power);
+        frontLeft.setPower(power);
+        frontRight.setPower(-power);
+        backLeft.setPower(power);
+        backRight.setPower(-power);
     }
 
     public boolean outsideOfRange(double targetDegrees, double initialDegrees) {
@@ -570,18 +570,21 @@ public class SSDriveObject extends Object{
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setModeAll(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        opmode.telemetry.addData("degrees, end of turn", gyro.getIntegratedZValue());
+        opmode.telemetry.addData("degrees, start of turn", gyro.getIntegratedZValue());
         opmode.telemetry.update();
 
         if (ticks > 0) {
-            while ((frontLeft.getCurrentPosition() <= ticks) && opmode.opModeIsActive()) {
-                setTurnPowerAll(powerLimit);
-            }
-        } else if (ticks < 0) {
-            while ((frontLeft.getCurrentPosition() >= ticks) && opmode.opModeIsActive()) {
+            // positive (CCW) turn => left motor goes in (-) direction
+            while ((frontLeft.getCurrentPosition() >= -ticks) && opmode.opModeIsActive()) {
                 setTurnPowerAll(-powerLimit);
             }
+        } else if (ticks < 0) {
+            while ((frontLeft.getCurrentPosition() <= -ticks) && opmode.opModeIsActive()) {
+                setTurnPowerAll(powerLimit);
+            }
         }
+        opmode.telemetry.addData("degrees, end of turn", gyro.getIntegratedZValue());
+        opmode.telemetry.update();
 
         /*if (ticks > 0) {
             while((frontLeft.getCurrentPosition() <= ticks) && opmode.opModeIsActive()) {
