@@ -486,10 +486,20 @@ public class SSDriveObject extends Object{
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setModeAll(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        opmode.telemetry.addData("degrees, gyro start of turn", gyro.getIntegratedZValue());
+        opmode.telemetry.addData("degrees, end of turn", gyro.getIntegratedZValue());
         opmode.telemetry.update();
 
         if (ticks > 0) {
+            while ((frontLeft.getCurrentPosition() <= ticks) && opmode.opModeIsActive()) {
+                setTurnPowerAll(powerLimit);
+            }
+        } else if (ticks < 0) {
+            while ((frontLeft.getCurrentPosition() >= ticks) && opmode.opModeIsActive()) {
+                setTurnPowerAll(-powerLimit);
+            }
+        }
+
+        /*if (ticks > 0) {
             while((frontLeft.getCurrentPosition() <= ticks) && opmode.opModeIsActive()) {
                 if (frontLeft.getCurrentPosition() < PERCENT * ticks) {
                     setTurnPowerAll(Math.max((1 / PERCENT) * powerLimit * frontLeft.getCurrentPosition() / ticks, powerMin));
@@ -523,13 +533,15 @@ public class SSDriveObject extends Object{
                     telemetryDcMotor();
                 }
             }
-        }
+        }*/
+
+
+
+        stopDriving();
 
         opmode.telemetry.addData("degrees, end of turn", gyro.getIntegratedZValue());
         opmode.telemetry.update();
 
-
-        stopDriving();
 
         /*double target;
 
