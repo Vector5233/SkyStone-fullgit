@@ -70,11 +70,12 @@ public class DriveTest2 extends LinearOpMode {
         initialize();
         waitForStart();
 
+        drive.setHookVrt(0.9);
         drive.setHookHrz(1);
         sleep(200);
         drive.setHookVrt(0.4);
         sleep(250);
-        drive.driveDistance(1, -5);
+        drive.strafeDistance(1, 5);
         sleep(200);
         drive.setHookHrz(0);
         drive.setRollerMoters(true, 1, 1000);

@@ -390,7 +390,7 @@ public class ConceptVuforiaNavigationWebcam extends LinearOpMode {
 
             if (gamepad1.a && !buttonPressed) {
                 captureFrameToFile();
-                }
+            }
             buttonPressed = gamepad1.a;
 
             for (VuforiaTrackable trackable : allTrackables) {

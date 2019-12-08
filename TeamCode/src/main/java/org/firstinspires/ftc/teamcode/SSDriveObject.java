@@ -31,9 +31,11 @@ public class SSDriveObject extends Object{
     LinearOpMode opmode;
     ModernRoboticsI2cGyro gyro;
 
+    final double ROBOT_RADIUS = 11.4;
     final double TICKS_PER_INCH_STRAIGHT = (383.6*2) / (4 * 3.14159265358979323846264);
+    final double TICKS_PER_INCH_TURN = (383.6*2) / (4 * 3.14159265358979323846264);
     final double TICKS_PER_INCH_STRAFE = ((383.6*2) / (4 * 3.14159265358979323846264))*1.15;
-    final double ROBOT_RADIUS = 9.8;
+    final double TICKS_PER_DEGREE = (3.14159 / 180) *  ROBOT_RADIUS * TICKS_PER_INCH_TURN;
     final double TOLERANCE = 2;  // in degrees
     final double MAXSPEED = 0.65;
     private ElapsedTime strafeTimeout;
@@ -564,15 +566,18 @@ public class SSDriveObject extends Object{
         }*/
         final double PERCENT = .1;
         double powerMin = 0.22;
-        int ticks = (int) ((3.14159 / 180) * degrees * ROBOT_RADIUS * TICKS_PER_INCH_STRAIGHT * 90/80);
 
+        int ticks = (int) (TICKS_PER_DEGREE * degrees);
 
         setModeAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setModeAll(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        opmode.telemetry.addData("degrees, start of turn", gyro.getIntegratedZValue());
-        opmode.telemetry.update();
+        //added constant: TICKS_PER_DEGREE
+        //added method: getAngleTelemetry - in it, user can get three types of angle value at once
 
+        getAngleTelemetry("TURN START");
+        //sleep is added to provide time to read the imu at the start of the turn
+        opmode.sleep(1500);
         if (ticks > 0) {
             // positive (CCW) turn => left motor goes in (-) direction
             while ((frontLeft.getCurrentPosition() >= -ticks) && opmode.opModeIsActive()) {
@@ -583,8 +588,6 @@ public class SSDriveObject extends Object{
                 setTurnPowerAll(powerLimit);
             }
         }
-        opmode.telemetry.addData("degrees, end of turn", gyro.getIntegratedZValue());
-        opmode.telemetry.update();
 
         /*if (ticks > 0) {
             while((frontLeft.getCurrentPosition() <= ticks) && opmode.opModeIsActive()) {
@@ -621,14 +624,8 @@ public class SSDriveObject extends Object{
                 }
             }
         }*/
-
-
-
         stopDriving();
-
-        opmode.telemetry.addData("degrees, end of turn", gyro.getIntegratedZValue());
-        opmode.telemetry.update();
-
+        getAngleTelemetry("TURN END");
 
         /*double target;
 
@@ -877,5 +874,13 @@ public class SSDriveObject extends Object{
                 break;
             }
         }
+    }
+
+    public void getAngleTelemetry (String status){
+        opmode.telemetry.addLine(status);
+        opmode.telemetry.addData("   encoder: ", frontLeft.getCurrentPosition()/TICKS_PER_DEGREE);
+        opmode.telemetry.addData("   gyro:    ", gyro.getIntegratedZValue());
+        opmode.telemetry.addData("   imu:     ", imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle);
+        opmode.telemetry.update();
     }
 }
