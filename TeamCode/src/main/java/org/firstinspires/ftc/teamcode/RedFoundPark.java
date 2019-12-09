@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name="SudoAutoOp", group="TeamCode")
+@Autonomous(name="RedFoundPark", group="TeamCode")
 
-public class SudoAutoOp extends LinearOpMode {
+public class RedFoundPark extends LinearOpMode {
     DcMotor frontRight, frontLeft, backRight, backLeft, rightRoller, leftRoller;
     Servo hookHrz, hookVrt, deliveryGrabber, deliveryRotation, camera, leftFoundation, blockSweeper;
     CRServo deliveryExtender;
@@ -71,20 +71,8 @@ public class SudoAutoOp extends LinearOpMode {
         initialize();
         waitForStart();
 
-        drive.strafeDistance(1,-5);
-        sleep(500);
-        drive.driveDistance(1, 100);
-        sleep(500);
-        //drive.turn(1, -90);
-        sleep(500);
-        drive.driveDistance(1,-23);
-        drive.setFoundationLeft(true);
-        sleep(500);
-        drive.driveDistance(1, 26);
-        drive.setFoundationLeft(false);
-        sleep(500);
-        drive.strafeDistance(1, 100);
-        sleep(500);
+        drive.moveFoundation(drive.RED);
+        drive.park(drive.RED, drive.FOUNDATION);
     }
 }
 

@@ -38,6 +38,13 @@ public class SSDriveObject extends Object{
     final double TICKS_PER_DEGREE = (3.14159 / 180) *  ROBOT_RADIUS * TICKS_PER_INCH_TURN;
     final double TOLERANCE = 2;  // in degrees
     final double MAXSPEED = 0.65;
+
+    final boolean BLUE = true;
+    final boolean RED = false;
+
+    final boolean FOUNDATION = true;
+    final boolean NORMAL = false;
+
     private ElapsedTime strafeTimeout;
     private ElapsedTime driveTimeout;
     private ElapsedTime turnTimeout;
@@ -873,6 +880,42 @@ public class SSDriveObject extends Object{
             if (turnTimeout.milliseconds() > DE_TIMEOUT) {
                 break;
             }
+        }
+    }
+
+    public void moveFoundation (boolean side) {
+        driveDistance(1, -30);
+        setFoundationLeft(true);
+        opmode.sleep(1000);
+        driveDistance(1, 28);
+        setFoundationLeft(false);
+        opmode.sleep(1000);
+        park(side, false);
+    }
+
+    public void park (boolean side, boolean state) {
+        //Side
+            //true = blue
+            //false = red
+        //State
+            //true = normal
+            //false = foundation
+
+        if(state) {
+            if (side) {
+                driveDistance(1, 53);
+            } else {
+                //strafeDistance(-1, 40, 3000);
+                setHookHrz(1);
+            }
+        } else {
+            if (side) {
+                strafeDistance(1, -53);
+            } else {
+                strafeDistance(1, 53);
+            }
+
+
         }
     }
 

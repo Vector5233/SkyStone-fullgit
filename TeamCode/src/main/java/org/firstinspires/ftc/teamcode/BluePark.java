@@ -7,15 +7,21 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name="SudoAutoOp", group="TeamCode")
+@Autonomous(name="BluePark", group="TeamCode")
 
-public class SudoAutoOp extends LinearOpMode {
+public class BluePark extends LinearOpMode {
     DcMotor frontRight, frontLeft, backRight, backLeft, rightRoller, leftRoller;
     Servo hookHrz, hookVrt, deliveryGrabber, deliveryRotation, camera, leftFoundation, blockSweeper;
     CRServo deliveryExtender;
     LinearOpMode opmode;
     ModernRoboticsI2cGyro gyro;
     SSDriveObject drive;
+
+    final boolean BLUE = true;
+    final boolean RED = false;
+
+    final boolean FOUNDATION = true;
+    final boolean NORMAL = false;
 
     public void initialize(){
         frontRight = hardwareMap.dcMotor.get("frontRight");
@@ -71,20 +77,7 @@ public class SudoAutoOp extends LinearOpMode {
         initialize();
         waitForStart();
 
-        drive.strafeDistance(1,-5);
-        sleep(500);
-        drive.driveDistance(1, 100);
-        sleep(500);
-        //drive.turn(1, -90);
-        sleep(500);
-        drive.driveDistance(1,-23);
-        drive.setFoundationLeft(true);
-        sleep(500);
-        drive.driveDistance(1, 26);
-        drive.setFoundationLeft(false);
-        sleep(500);
-        drive.strafeDistance(1, 100);
-        sleep(500);
+        drive.park(drive.BLUE, drive.NORMAL);
     }
 }
 
