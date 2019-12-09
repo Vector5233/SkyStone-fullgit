@@ -158,7 +158,7 @@ public class SkyStoneTeleOp extends OpMode {
 
         deliveryGrabber.setPosition(0);
 
-        capServo.setPosition(0);
+        capServo.setPosition(0.8);
 
         gyro.calibrate();
 
@@ -361,6 +361,7 @@ public class SkyStoneTeleOp extends OpMode {
     }
 
     public void setCapServoTest() {
+        // better code
         if (gamepad2.b && !if_pressedGp2B) {
             if (capServo.getPosition() <= 0.1) {
                 capServo.setPosition(0.8);
