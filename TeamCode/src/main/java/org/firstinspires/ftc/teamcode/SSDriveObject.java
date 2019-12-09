@@ -31,7 +31,7 @@ public class SSDriveObject extends Object{
     LinearOpMode opmode;
     ModernRoboticsI2cGyro gyro;
 
-    final double ROBOT_RADIUS = 11.4;
+    final double ROBOT_RADIUS = 12.5;
     final double TICKS_PER_INCH_STRAIGHT = (383.6*2) / (4 * 3.14159265358979323846264);
     final double TICKS_PER_INCH_TURN = (383.6*2) / (4 * 3.14159265358979323846264);
     final double TICKS_PER_INCH_STRAFE = ((383.6*2) / (4 * 3.14159265358979323846264))*1.15;
