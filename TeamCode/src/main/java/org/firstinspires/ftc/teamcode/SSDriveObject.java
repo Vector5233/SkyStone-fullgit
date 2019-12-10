@@ -42,8 +42,8 @@ public class SSDriveObject extends Object{
     final boolean BLUE = true;
     final boolean RED = false;
 
-    final boolean FOUNDATION = true;
-    final boolean NORMAL = false;
+    final boolean FOUNDATION = false;
+    final boolean NORMAL = true;
 
     private ElapsedTime strafeTimeout;
     private ElapsedTime driveTimeout;
@@ -823,11 +823,11 @@ public class SSDriveObject extends Object{
     public void setFoundationLeft (boolean launch) {
         //launch true = grabber down
         //launch false = grabber up
-        if (launch) {
+        if (!launch) {
             leftFoundation.setPosition(0);
             //rightFoundation.setPosition(0);
         }
-        else if (!launch) {
+        else {
             leftFoundation.setPosition(0.7);
             //rightFoundation.setPosition(0.7);
         }
@@ -884,13 +884,13 @@ public class SSDriveObject extends Object{
     }
 
     public void moveFoundation (boolean side) {
-        driveDistance(1, -30);
+        driveDistance(1, -24.5);
         setFoundationLeft(true);
         opmode.sleep(1000);
-        driveDistance(1, 28);
+        driveDistance(1, 26);
         setFoundationLeft(false);
         opmode.sleep(1000);
-        park(side, false);
+        //park(side, FOUNDATION);
     }
 
     public void park (boolean side, boolean state) {
@@ -903,15 +903,30 @@ public class SSDriveObject extends Object{
 
         if(state) {
             if (side) {
+                opmode.telemetry.addLine("Blue normal");
+                opmode.telemetry.update();
+                opmode.sleep(1000);
                 driveDistance(1, 53);
             } else {
-                //strafeDistance(-1, 40, 3000);
+                opmode.telemetry.addLine("Red normal");
+                opmode.telemetry.update();
+                opmode.sleep(1000);
                 setHookHrz(1);
+                setHookHrz(0);
+                strafeDistance(1, -53);
+
+
             }
         } else {
             if (side) {
+                opmode.telemetry.addLine("Blue foundation");
+                opmode.telemetry.update();
+                opmode.sleep(1000);
                 strafeDistance(1, -53);
             } else {
+                opmode.telemetry.addLine("Red foundation");
+                opmode.telemetry.update();
+                opmode.sleep(1000);
                 strafeDistance(1, 53);
             }
 
