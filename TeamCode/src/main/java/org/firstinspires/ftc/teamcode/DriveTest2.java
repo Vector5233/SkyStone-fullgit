@@ -70,30 +70,6 @@ public class DriveTest2 extends LinearOpMode {
         initialize();
         waitForStart();
 
-        drive.setHookVrt(0.9);
-        drive.setHookHrz(1);
-        sleep(200);
-        drive.setHookVrt(0.4);
-        sleep(250);
-        drive.strafeDistance(1, 5);
-        sleep(200);
-        drive.setHookHrz(0);
-        drive.setRollerMoters(true, 1, 1000);
-        //how to check if the block is collected or not (next round)
-        drive.setBlockSweeper(true);
-        sleep(750);
-        drive.setBlockSweeper(false);
-
-
-
-
-
-        /*
-        drive.driveDistance(1, 10, 5000);
-        sleep(3000);
-        drive.driveDistance(0.5, 10, 5000);
-        sleep(50 );
-        telemetry.addLine("done");
-         */
+        drive.collectSkyStone();
     }
 }

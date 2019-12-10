@@ -941,4 +941,20 @@ public class SSDriveObject extends Object{
         opmode.telemetry.addData("   imu:     ", imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle);
         opmode.telemetry.update();
     }
+
+    public void collectSkyStone(){
+        setHookVrt(0.9);
+        setHookHrz(1);
+        opmode.sleep(200);
+        setHookVrt(0.4);
+        opmode.sleep(250);
+        strafeDistance(1, 5);
+        opmode.sleep(200);
+        setHookHrz(0);
+        setRollerMoters(true, 1, 1000);
+        //how to check if the block is collected or not (next round)
+        setBlockSweeper(true);
+        opmode.sleep(750);
+        setBlockSweeper(false);
+    }
 }
